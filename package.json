@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "description": "Interactive agent risk assessment tool for the PAC Framework. Three inputs. Three dimensions. One actionable answer.",
   "author": "Shane Deconinck <shane@trustedagentic.ai>",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "homepage": "https://trustedagentic.ai",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shanedeconinck/pac-risk-assessment.git"
+    "url": "https://github.com/ShaneDeconinck/pac-agent-profiler.git"
   },
   "keywords": [
     "ai-agents",
