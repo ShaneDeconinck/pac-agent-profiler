@@ -2,9 +2,13 @@
 
 > **v0.1** — Early release. Agentically engineered with [Claude Code](https://claude.ai/claude-code) & Opus 4.6.
 
-Interactive 3D risk assessment tool built for [trustedagentic.ai](https://trustedagentic.ai). Part of the [PAC Framework](https://shanedeconinck.be/framework) — helping enterprise decision-makers answer: **may this agent do this thing, and what do I need to build for that?**
+Interactive 3D risk assessment tool built for [trustedagentic.ai](https://trustedagentic.ai). Part of the [PAC Framework](https://shanedeconinck.be/framework) (Potential, Accountability, Control) — a governance model for AI agents that helps enterprise decision-makers answer: **may this agent do this thing, and what do I need to build for that?**
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/ace5cddb-fa49-461b-8e4e-861aa3a6b8c2/deploy-status)](https://app.netlify.com/projects/pac-agent-profiler/deploys)
+
+## Why
+
+Governing AI agents means juggling multiple dimensions at once — reliability, blast radius, infrastructure, autonomy — and they all interact. Spreadsheets and slide decks couldn't capture it. I needed a way to wrap my head around how these dimensions relate to each other, and to make that thinking shareable with stakeholders. So I built this.
 
 ## The Model
 
@@ -67,6 +71,10 @@ npm run build
 ```
 
 Outputs to `dist/`. Configured for Netlify (`netlify.toml` included) — connect your GitHub repo and every push auto-deploys.
+
+## Contributing
+
+This is an early release — feedback, ideas, and PRs are welcome. [Open an issue](https://github.com/ShaneDeconinck/pac-agent-profiler/issues) or reach out via [trustedagentic.ai](https://trustedagentic.ai).
 
 ## License
 
