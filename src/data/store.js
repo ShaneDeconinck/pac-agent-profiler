@@ -206,7 +206,7 @@ export function registerStore() {
 
     // Sharing
     shareLink() {
-      const state = { cases: this.cases }
+      const state = { cases: this.cases, config: this.config }
       const hash = encodeToHash(state)
       window.location.hash = hash.slice(1)
       navigator.clipboard?.writeText(window.location.href)

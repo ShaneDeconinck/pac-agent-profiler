@@ -411,8 +411,15 @@
         <div class="text-[11px] text-muted" x-text="$store.pac.caseCount()"></div>
       </div>
       <div class="flex gap-1 items-center">
-        <div class="flex gap-1" x-show="$store.pac.mode === 'custom' && !$store.pac.showConfig">
-          <button disabled class="px-2 py-1 rounded text-[10px] border border-border text-muted/40 cursor-not-allowed transition-all" title="Coming soon">Share</button>
+        <div class="flex gap-1" x-show="$store.pac.mode === 'custom' && !$store.pac.showConfig" x-data="{ shared: false }">
+          <button
+            @click="$store.pac.shareLink(); shared = true; setTimeout(() => shared = false, 2000)"
+            :class="shared
+              ? 'border-viz-green/40 text-viz-green bg-viz-green/[0.06]'
+              : 'border-border text-muted hover:text-navy hover:border-navy/30'"
+            class="px-2 py-1 rounded text-[10px] border cursor-pointer transition-all"
+            :title="shared ? 'Link copied!' : 'Share a link that loads with your cases & settings'"
+            x-text="shared ? 'Copied!' : 'Share w/ your data'"></button>
           <button disabled class="px-2 py-1 rounded text-[10px] border border-border text-muted/40 cursor-not-allowed transition-all" title="Coming soon">Export</button>
           <button disabled class="px-2 py-1 rounded text-[10px] border border-border text-muted/40 cursor-not-allowed transition-all" title="Coming soon">Import</button>
         </div>
@@ -505,7 +512,10 @@
     <!-- Disclaimer (examples mode) -->
     <div x-show="$store.pac.mode === 'examples' && !$store.pac.showConfig" class="px-3 py-2 border-b border-border bg-navy/[0.03]">
       <p class="text-[10px] text-muted/70 leading-relaxed italic">
-        Reliability calibrated from frontier models (Opus 4.6, GPT-5.2, Gemini 3.1) — SWE-bench, &tau;&sup2;-bench, Parseur, PMC. Sources per case.
+        Reliability calibrated from frontier models (Opus 4.6, GPT-5.2, Gemini 3.1) —
+        <a href="https://www.swebench.com" target="_blank" rel="noopener" class="text-navy/70 hover:text-navy underline decoration-navy/30 hover:decoration-navy">SWE-bench</a>,
+        <a href="https://metr.github.io/tau-bench/" target="_blank" rel="noopener" class="text-navy/70 hover:text-navy underline decoration-navy/30 hover:decoration-navy">&tau;&sup2;-bench</a>,
+        Parseur, PMC. Sources per case.
       </p>
     </div>
 
@@ -556,7 +566,12 @@
             </template>
           </div>
           <!-- Source (examples mode only) -->
-          <div x-show="$store.pac.mode === 'examples' && c.source" class="text-[8px] text-muted/50 leading-relaxed mt-1 italic" x-text="c.source"></div>
+          <div x-show="$store.pac.mode === 'examples' && c.source" class="text-[8px] text-muted/50 leading-relaxed mt-1 italic flex items-start gap-1">
+            <span x-text="c.source" class="flex-1"></span>
+            <a x-show="c.sourceUrl" :href="c.sourceUrl" target="_blank" rel="noopener"
+              class="shrink-0 text-[8px] text-navy/60 hover:text-navy underline decoration-navy/30 hover:decoration-navy not-italic"
+              @click.stop>source ↗</a>
+          </div>
           <!-- Per-case infrastructure (custom mode only) -->
           <div x-show="$store.pac.mode === 'custom'" x-data="{ showInfo: false }">
             <div class="flex items-center gap-1">
