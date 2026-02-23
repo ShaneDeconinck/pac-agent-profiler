@@ -4,7 +4,7 @@
 
 Interactive 3D risk assessment tool built for [trustedagentic.ai](https://trustedagentic.ai). Part of the [PAC Framework](https://shanedeconinck.be/framework) (Potential, Accountability, Control) — a governance model for AI agents that helps enterprise decision-makers answer: **may this agent do this thing, and what do I need to build for that?**
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/ace5cddb-fa49-461b-8e4e-861aa3a6b8c2/deploy-status)](https://app.netlify.com/projects/pac-agent-profiler/deploys)
+**[Live Demo →](https://profiler.trustedagentic.ai)** &nbsp; [![Netlify Status](https://api.netlify.com/api/v1/badges/ace5cddb-fa49-461b-8e4e-861aa3a6b8c2/deploy-status)](https://app.netlify.com/projects/pac-agent-profiler/deploys)
 
 ## Why
 
