@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="6" fill="#f0f2f5"/>
+  <!-- Horizontal wave lines -->
+  <path d="M 3,10 Q 8,7 13,10 Q 18,13 23,10 Q 28,7 29,9" fill="none" stroke="#8ea8c4" stroke-width="1" opacity="0.4"/>
+  <path d="M 3,14 Q 8,11 13,14 Q 18,17 23,14 Q 28,11 29,13" fill="none" stroke="#5a7a9a" stroke-width="1.2" opacity="0.6"/>
+  <path d="M 3,18 Q 8,15 13,18 Q 18,21 23,18 Q 28,15 29,17" fill="none" stroke="#3b5d7c" stroke-width="1.5" opacity="0.9"/>
+  <path d="M 3,22 Q 8,19 13,22 Q 18,25 23,22 Q 28,19 29,21" fill="none" stroke="#5a7a9a" stroke-width="1.2" opacity="0.6"/>
+  <path d="M 3,26 Q 8,23 13,26 Q 18,29 23,26 Q 28,23 29,25" fill="none" stroke="#8ea8c4" stroke-width="1" opacity="0.4"/>
+  <!-- Vertical cross lines for mesh effect -->
+  <path d="M 8,7 Q 8,16 8,29" fill="none" stroke="#5a7a9a" stroke-width="0.7" opacity="0.3"/>
+  <path d="M 13,7 Q 13,16 13,29" fill="none" stroke="#5a7a9a" stroke-width="0.7" opacity="0.3"/>
+  <path d="M 18,7 Q 18,16 18,29" fill="none" stroke="#5a7a9a" stroke-width="0.7" opacity="0.3"/>
+  <path d="M 23,7 Q 23,16 23,29" fill="none" stroke="#5a7a9a" stroke-width="0.7" opacity="0.3"/>
+</svg>

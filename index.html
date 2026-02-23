@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Profiler — Trusted Agentic AI</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-cream text-ink font-sans overflow-hidden h-screen" x-data x-cloak>
+
+<!-- First-visit intro -->
+<div
+  x-data="{ show: !localStorage.getItem('pac-intro-seen'), hl: null }"
+  x-init="window.__showIntro = () => { show = true; $nextTick(() => window.__bootIntro && window.__bootIntro()) }; window.__introCycleHL = (dim) => { $data.hl = dim }"
+  x-show="show"
+  x-transition:enter="transition ease-out duration-300"
+  x-transition:enter-start="opacity-0"
+  x-transition:enter-end="opacity-100"
+  x-transition:leave="transition ease-in duration-200"
+  x-transition:leave-start="opacity-100"
+  x-transition:leave-end="opacity-0"
+  class="fixed inset-0 z-50 flex"
+  style="background: #0a0e1a"
+>
+  <!-- Left: abstract 3D visualization -->
+  <div class="hidden md:block md:w-[50%] h-full relative" id="intro-viz"></div>
+
+  <!-- Right: intro text -->
+  <div class="flex-1 h-full overflow-y-auto flex items-center">
+    <div class="p-10 md:p-14 md:pl-16 max-w-xl">
+      <p class="text-lg mb-8" style="font-family:'Space Grotesk',sans-serif;letter-spacing:0.5px">
+        <span class="text-white/50">trusted</span><span style="color:#4a7ab5">agentic</span><span class="text-white/50">.ai</span>
+      </p>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-10 leading-tight" style="font-family:'Space Grotesk',sans-serif">Agent Profiler</h2>
+
+      <div class="text-[15px] text-white/60 leading-[1.8] mb-12">
+        <p class="mb-6">Governing agents is a multidimensional challenge. This profiler helps you map it, align stakeholders, and act with confidence.</p>
+
+        <ul class="list-none space-y-1 mb-6 pl-0">
+          <li class="flex gap-2 py-1.5 px-2 -mx-2 rounded cursor-pointer"
+            :style="'transition:background 0.3s,border-color 0.3s;border-left:2px solid ' + (hl==='reliability' ? '#06b6d4' : 'transparent') + ';background:' + (hl==='reliability' ? 'rgba(6,182,212,0.08)' : 'transparent')"
+            @mouseenter="hl='reliability'; window.__introHL && window.__introHL('reliability')"
+            @mouseleave="hl=null; window.__introHL && window.__introHL(null)"
+          >
+            <span><strong :style="'color:' + (hl==='reliability' ? '#06b6d4' : 'rgba(255,255,255,0.95)') + ';transition:color 0.2s'">Reliability</strong>: how often it gets it right</span>
+          </li>
+          <li class="flex gap-2 py-1.5 px-2 -mx-2 rounded cursor-pointer"
+            :style="'transition:background 0.3s,border-color 0.3s;border-left:2px solid ' + (hl==='blastRadius' ? '#f59e0b' : 'transparent') + ';background:' + (hl==='blastRadius' ? 'rgba(245,158,11,0.08)' : 'transparent')"
+            @mouseenter="hl='blastRadius'; window.__introHL && window.__introHL('blastRadius')"
+            @mouseleave="hl=null; window.__introHL && window.__introHL(null)"
+          >
+            <span><strong :style="'color:' + (hl==='blastRadius' ? '#f59e0b' : 'rgba(255,255,255,0.95)') + ';transition:color 0.2s'">Blast radius</strong>: what happens when it doesn't</span>
+          </li>
+          <li class="flex gap-2 py-1.5 px-2 -mx-2 rounded cursor-pointer"
+            :style="'transition:background 0.3s,border-color 0.3s;border-left:2px solid ' + (hl==='businessValue' ? '#fbbf24' : 'transparent') + ';background:' + (hl==='businessValue' ? 'rgba(251,191,36,0.08)' : 'transparent')"
+            @mouseenter="hl='businessValue'; window.__introHL && window.__introHL('businessValue')"
+            @mouseleave="hl=null; window.__introHL && window.__introHL(null)"
+          >
+            <span><strong :style="'color:' + (hl==='businessValue' ? '#fbbf24' : 'rgba(255,255,255,0.95)') + ';transition:color 0.2s'">Business value</strong>: why it matters</span>
+          </li>
+          <li class="flex gap-2 py-1.5 px-2 -mx-2 rounded cursor-pointer"
+            :style="'transition:background 0.3s,border-color 0.3s;border-left:2px solid ' + (hl==='governance' ? '#3b82f6' : 'transparent') + ';background:' + (hl==='governance' ? 'rgba(59,130,246,0.08)' : 'transparent')"
+            @mouseenter="hl='governance'; window.__introHL && window.__introHL('governance')"
+            @mouseleave="hl=null; window.__introHL && window.__introHL(null)"
+          >
+            <span><strong :style="'color:' + (hl==='governance' ? '#3b82f6' : 'rgba(255,255,255,0.95)') + ';transition:color 0.2s'">Governance thresholds</strong>: where the line is drawn</span>
+          </li>
+          <li class="flex gap-2 py-1.5 px-2 -mx-2 rounded cursor-pointer"
+            :style="'transition:background 0.3s,border-color 0.3s;border-left:2px solid ' + (hl==='infrastructure' ? '#64748b' : 'transparent') + ';background:' + (hl==='infrastructure' ? 'rgba(100,116,139,0.08)' : 'transparent')"
+            @mouseenter="hl='infrastructure'; window.__introHL && window.__introHL('infrastructure')"
+            @mouseleave="hl=null; window.__introHL && window.__introHL(null)"
+          >
+            <span><strong :style="'color:' + (hl==='infrastructure' ? '#64748b' : 'rgba(255,255,255,0.95)') + ';transition:color 0.2s'">Infrastructure</strong>: the guardrails in place</span>
+          </li>
+          <li class="flex gap-2 py-1.5 px-2 -mx-2 rounded cursor-pointer"
+            :style="'transition:background 0.3s,border-color 0.3s;border-left:2px solid ' + (hl==='autonomy' ? '#a78bfa' : 'transparent') + ';background:' + (hl==='autonomy' ? 'rgba(167,139,250,0.08)' : 'transparent')"
+            @mouseenter="hl='autonomy'; window.__introHL && window.__introHL('autonomy')"
+            @mouseleave="hl=null; window.__introHL && window.__introHL(null)"
+          >
+            <span><strong :style="'color:' + (hl==='autonomy' ? '#a78bfa' : 'rgba(255,255,255,0.95)') + ';transition:color 0.2s'">Autonomy</strong>: the level of independence it <em>earns</em></span>
+          </li>
+        </ul>
+
+        <p>Built around the <a href="https://trustedagentic.ai" target="_blank" class="text-white/90 underline underline-offset-3 decoration-white/30 hover:decoration-white pointer-events-auto">PAC Framework</a> — Potential, Accountability, Control.</p>
+      </div>
+
+      <button
+        @click="show = false; localStorage.setItem('pac-intro-seen', '1'); window.__destroyIntro && window.__destroyIntro()"
+        class="py-3 px-10 text-white text-sm font-semibold cursor-pointer transition-all font-sans"
+        style="background:#2d4a6f"
+        onmouseenter="this.style.background='#3d5f8f'" onmouseleave="this.style.background='#2d4a6f'"
+      >Get started</button>
+
+      <div class="mt-10 space-y-2">
+        <div class="flex items-center gap-3">
+          <a href="https://github.com/ShaneDeconinck/pac-agent-profiler" target="_blank" class="text-white/30 hover:text-white/60 transition-colors pointer-events-auto" title="GitHub">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          </a>
+          <span class="text-xs text-white/30 font-mono">MIT License &middot; &copy; trustedagentic.ai &middot; Shane Deconinck</span>
+        </div>
+        <p class="text-[10px] text-white/20 font-mono">Agentically engineered w/ Claude Code &amp; Opus 4.6</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile notice -->
+<div class="md:hidden fixed inset-0 z-40 bg-cream flex items-center justify-center p-8 text-center">
+  <div>
+    <h2 class="text-lg font-bold text-ink mb-3" style="font-family:'Space Grotesk',sans-serif">Agent Profiler</h2>
+    <p class="text-sm text-muted leading-relaxed mb-4">This tool is best experienced on a tablet or larger screen (1024px+).</p>
+    <a href="https://trustedagentic.ai" class="text-xs text-navy underline underline-offset-3 font-mono">trustedagentic.ai</a>
+  </div>
+</div>
+
+<!-- Help modal -->
+<div
+  id="help-modal"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 hidden"
+  onclick="if(event.target===this)this.classList.add('hidden')"
+>
+  <div class="bg-cream rounded-xl shadow-xl max-w-4xl w-full mx-4 max-h-[85vh] overflow-y-auto p-6 md:p-8" onclick="event.stopPropagation()">
+        <div class="flex justify-between items-start mb-5">
+          <h2 class="text-lg font-bold text-ink" style="font-family:'Space Grotesk',sans-serif">How to read the chart</h2>
+          <button onclick="document.getElementById('help-modal').classList.add('hidden')" class="text-muted hover:text-ink text-xl cursor-pointer leading-none">&times;</button>
+        </div>
+
+        <!-- Axes -->
+        <div class="mb-5">
+          <h3 class="text-xs text-muted tracking-wider uppercase mb-2">Axes</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-[12px]">
+            <div class="p-3 rounded-lg border border-border bg-sand/40">
+              <div class="font-semibold text-ink mb-1">X — Blast Radius</div>
+              <p class="text-muted leading-relaxed">What happens when the agent gets it wrong. Higher = more damage.</p>
+            </div>
+            <div class="p-3 rounded-lg border border-border bg-sand/40">
+              <div class="font-semibold text-ink mb-1">Z — Reliability</div>
+              <p class="text-muted leading-relaxed">How often the agent gets it right. Further right = more reliable.</p>
+            </div>
+            <div class="p-3 rounded-lg border border-border bg-sand/40">
+              <div class="font-semibold text-ink mb-1">Y — Autonomy (3D)</div>
+              <p class="text-muted leading-relaxed">The level of independence the agent earns. Higher = more autonomous.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual encoding -->
+        <div class="mb-5">
+          <h3 class="text-xs text-muted tracking-wider uppercase mb-2">Visual encoding</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[12px]">
+            <div class="p-3 rounded-lg border border-border bg-sand/40">
+              <div class="font-semibold text-ink mb-1.5">Dot color</div>
+              <div class="flex gap-4">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:#10b981"></span> Meets threshold</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:#ef4444"></span> Below threshold</span>
+              </div>
+            </div>
+            <div class="p-3 rounded-lg border border-border bg-sand/40">
+              <div class="font-semibold text-ink mb-1.5">Dot size = Business Value</div>
+              <div class="flex gap-4 items-center">
+                <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full inline-block bg-muted/50"></span> V1 Incremental</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full inline-block bg-muted/50"></span> V2 Operational</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full inline-block bg-muted/50"></span> V3 Strategic</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full inline-block bg-muted/50"></span> V4 Transform</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scales — two columns -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+          <!-- Blast Radius scale -->
+          <div>
+            <h3 class="text-xs text-muted tracking-wider uppercase mb-2">Blast Radius (B1–B5)</h3>
+            <div class="space-y-1 text-[12px]">
+              <div class="flex gap-2"><span class="text-navy font-mono font-semibold w-6 shrink-0">B1</span><span class="font-semibold text-ink">Contained</span><span class="text-muted">— Errors caught before impact</span></div>
+              <div class="flex gap-2"><span class="text-navy font-mono font-semibold w-6 shrink-0">B2</span><span class="font-semibold text-ink">Recoverable</span><span class="text-muted">— Correctable with effort</span></div>
+              <div class="flex gap-2"><span class="text-navy font-mono font-semibold w-6 shrink-0">B3</span><span class="font-semibold text-ink">Exposed</span><span class="text-muted">— Public-facing, hard to recall</span></div>
+              <div class="flex gap-2"><span class="text-navy font-mono font-semibold w-6 shrink-0">B4</span><span class="font-semibold text-ink">Regulated</span><span class="text-muted">— Compliance / legal risk</span></div>
+              <div class="flex gap-2"><span class="text-navy font-mono font-semibold w-6 shrink-0">B5</span><span class="font-semibold text-ink">Irreversible</span><span class="text-muted">— Money, contracts, safety</span></div>
+            </div>
+          </div>
+
+          <!-- Autonomy scale -->
+          <div>
+            <h3 class="text-xs text-muted tracking-wider uppercase mb-2">Autonomy Levels (A1–A5)</h3>
+            <div class="space-y-1 text-[12px]">
+              <div class="flex gap-2"><span class="font-mono font-semibold w-6 shrink-0" style="color:#93c5fd">A1</span><span class="font-semibold text-ink">Suggestion</span><span class="text-muted">— Human-in-the-loop</span></div>
+              <div class="flex gap-2"><span class="font-mono font-semibold w-6 shrink-0" style="color:#60a5fa">A2</span><span class="font-semibold text-ink">Approve</span><span class="text-muted">— Drafts for approval</span></div>
+              <div class="flex gap-2"><span class="font-mono font-semibold w-6 shrink-0" style="color:#3b82f6">A3</span><span class="font-semibold text-ink">Oversight</span><span class="text-muted">— Human-on-the-loop</span></div>
+              <div class="flex gap-2"><span class="font-mono font-semibold w-6 shrink-0" style="color:#2563eb">A4</span><span class="font-semibold text-ink">Delegated</span><span class="text-muted">— Periodic review</span></div>
+              <div class="flex gap-2"><span class="font-mono font-semibold w-6 shrink-0" style="color:#1d4ed8">A5</span><span class="font-semibold text-ink">Autonomous</span><span class="text-muted">— Fully independent</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Infrastructure scale -->
+        <div class="mb-5">
+          <h3 class="text-xs text-muted tracking-wider uppercase mb-2">Infrastructure Safeguards (I1–I5)</h3>
+          <div class="flex flex-wrap gap-x-5 gap-y-1 text-[12px]">
+            <div class="flex gap-2"><span class="text-viz-green font-mono font-semibold w-6 shrink-0">I1</span><span class="font-semibold text-ink">Open</span><span class="text-muted">— Bare output</span></div>
+            <div class="flex gap-2"><span class="text-viz-green font-mono font-semibold w-6 shrink-0">I2</span><span class="font-semibold text-ink">Logged</span><span class="text-muted">— Audit trail</span></div>
+            <div class="flex gap-2"><span class="text-viz-green font-mono font-semibold w-6 shrink-0">I3</span><span class="font-semibold text-ink">Verified</span><span class="text-muted">— Identity & provenance</span></div>
+            <div class="flex gap-2"><span class="text-viz-green font-mono font-semibold w-6 shrink-0">I4</span><span class="font-semibold text-ink">Authorized</span><span class="text-muted">— Authority grants</span></div>
+            <div class="flex gap-2"><span class="text-viz-green font-mono font-semibold w-6 shrink-0">I5</span><span class="font-semibold text-ink">Contained</span><span class="text-muted">— Sandbox & isolation</span></div>
+          </div>
+        </div>
+
+        <div class="text-[11px] text-muted/50 text-center">
+          Built on the <a href="https://trustedagentic.ai" target="_blank" class="underline underline-offset-2 hover:text-navy">PAC Framework</a> — Potential, Accountability, Control
+        </div>
+      </div>
+    </div>
+</div>
+<!-- How to use modal -->
+<div
+  id="howto-modal"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 hidden"
+  onclick="if(event.target===this)this.classList.add('hidden')"
+>
+  <div class="bg-cream rounded-xl shadow-xl max-w-2xl w-full mx-4 max-h-[85vh] overflow-y-auto p-6 md:p-8" onclick="event.stopPropagation()">
+    <div class="flex justify-between items-start mb-5">
+      <h2 class="text-lg font-bold text-ink" style="font-family:'Space Grotesk',sans-serif">How to use</h2>
+      <button onclick="document.getElementById('howto-modal').classList.add('hidden')" class="text-muted hover:text-ink text-xl cursor-pointer leading-none">&times;</button>
+    </div>
+
+    <div class="space-y-5 text-[13px] text-muted leading-relaxed">
+      <!-- Step 1 -->
+      <div class="flex gap-3">
+        <span class="w-6 h-6 rounded-full bg-navy/10 text-navy text-xs font-bold flex items-center justify-center shrink-0">1</span>
+        <div>
+          <div class="font-semibold text-ink mb-1">Switch to "Your Cases"</div>
+          <p>Click the <strong class="text-ink">Your Cases</strong> tab in the right panel to start building your own assessment. Example cases are preloaded for reference.</p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="flex gap-3">
+        <span class="w-6 h-6 rounded-full bg-navy/10 text-navy text-xs font-bold flex items-center justify-center shrink-0">2</span>
+        <div>
+          <div class="font-semibold text-ink mb-1">Add use cases</div>
+          <p>Click <strong class="text-ink">+ Add use case</strong> and fill in the name, business value, blast radius, and reliability. Each case appears as a dot on the chart.</p>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="flex gap-3">
+        <span class="w-6 h-6 rounded-full bg-navy/10 text-navy text-xs font-bold flex items-center justify-center shrink-0">3</span>
+        <div>
+          <div class="font-semibold text-ink mb-1">Read the 2D chart</div>
+          <p><strong class="text-ink">Green dots</strong> meet the reliability threshold for their blast radius. <strong class="text-ink">Red dots</strong> fall short. Bigger dots = higher business value. The staircase lines show autonomy level thresholds.</p>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="flex gap-3">
+        <span class="w-6 h-6 rounded-full bg-navy/10 text-navy text-xs font-bold flex items-center justify-center shrink-0">4</span>
+        <div>
+          <div class="font-semibold text-ink mb-1">Enable Autonomy (3D view)</div>
+          <p>Click the <strong class="text-ink">Autonomy</strong> button to see the third axis. Cases rise to the autonomy level they <em>earn</em> based on reliability, blast radius, and infrastructure safeguards.</p>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="flex gap-3">
+        <span class="w-6 h-6 rounded-full bg-navy/10 text-navy text-xs font-bold flex items-center justify-center shrink-0">5</span>
+        <div>
+          <div class="font-semibold text-ink mb-1">Set infrastructure safeguards</div>
+          <p>Toggle <strong class="text-ink">I1–I5</strong> on each case card to see how infrastructure controls affect autonomy levels. Higher safeguards unlock higher autonomy.</p>
+        </div>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="flex gap-3">
+        <span class="w-6 h-6 rounded-full bg-navy/10 text-navy text-xs font-bold flex items-center justify-center shrink-0">6</span>
+        <div>
+          <div class="font-semibold text-ink mb-1">Tune thresholds</div>
+          <p>Click the <strong class="text-ink">gear icon</strong> to adjust the reliability thresholds and autonomy escalation strictness for your organization.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 pt-4 border-t border-border flex items-center justify-between">
+      <span class="text-[11px] text-muted/50">Click <strong class="text-muted">?</strong> on the chart for a legend reference</span>
+      <button onclick="document.getElementById('howto-modal').classList.add('hidden')" class="px-4 py-1.5 rounded border border-navy/50 bg-navy/[0.08] text-navy text-xs font-semibold cursor-pointer transition-all hover:bg-navy/15 font-sans">Got it</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.__showHelp = function() { document.getElementById('help-modal').classList.remove('hidden') };
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.getElementById('help-modal').classList.add('hidden');
+      document.getElementById('howto-modal').classList.add('hidden');
+    }
+  });
+</script>
+
+<div class="flex h-screen max-md:flex-col">
+
+  <!-- 3D Visualization -->
+  <div class="flex-1 relative overflow-hidden">
+    <!-- Canvas area — inset so chart doesn't render behind header/footer overlays -->
+    <div class="absolute inset-0 top-[8vh] bottom-[14vh]" id="vizContainer"></div>
+
+    <div class="absolute top-5 left-5 z-10 pointer-events-auto">
+      <a href="https://trustedagentic.ai" target="_blank" class="text-sm tracking-[0.5px] font-mono mb-0.5 block no-underline" style="font-family:'Space Grotesk',sans-serif"><span class="text-muted">trusted</span><span class="text-navy">agentic</span><span class="text-muted">.ai</span></a>
+      <h1 class="text-xl font-bold text-ink mb-0.5">Agent Profiler</h1>
+      <div class="text-xs text-muted leading-relaxed" x-data x-text="
+        $store.pac.cases.length === 0
+          ? 'Start by adding use cases →'
+          : $store.pac.layers.autonomy
+            ? 'Autonomy determines how high each case can go'
+            : 'Toggle Autonomy to see the 3D view'
+      "></div>
+    </div>
+
+    <!-- Layer controls -->
+    <div class="absolute bottom-5 left-5 z-10 flex gap-2 items-center flex-wrap" x-data>
+      <span class="text-[10px] text-muted/60 font-mono mr-0.5">Layers</span>
+
+      <div class="relative">
+        <button
+          @click="$store.pac.toggleLayer('autonomy')"
+          :class="$store.pac.layers.autonomy
+            ? 'border-navy/40 text-navy bg-navy/[0.08]'
+            : 'border-border text-ink/60 bg-sand hover:text-ink hover:border-muted'"
+          class="px-3 py-2 rounded border text-xs font-semibold cursor-pointer transition-all font-sans shadow-sm flex items-center gap-1.5"
+        ><svg x-show="$store.pac.layers.autonomy" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><svg x-show="!$store.pac.layers.autonomy" class="w-3.5 h-3.5 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Autonomy</button>
+
+        <!-- Callout arrow — visible only before first click -->
+        <div
+          x-show="!$store.pac.layers.autonomy && !$store.pac._autonomyClicked"
+          x-transition:leave="transition ease-in duration-300"
+          x-transition:leave-start="opacity-100"
+          x-transition:leave-end="opacity-0"
+          class="callout-arrow"
+          style="bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);"
+        >
+          <span>Click to switch to 3D view!</span>
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
+            <path d="M6 10 L0 0 L12 0 Z" fill="#2d4a6f" opacity="0.5"/>
+          </svg>
+        </div>
+      </div>
+
+      <button
+        @click="$store.pac.layers.autonomy && $store.pac.toggleLayer('surface')"
+        :class="$store.pac.layers.surface
+          ? 'border-navy/40 text-navy bg-navy/[0.08]'
+          : 'border-border text-ink/60 bg-sand hover:text-ink hover:border-muted'"
+        :style="{ opacity: $store.pac.layers.autonomy ? 1 : 0.3 }"
+        class="px-3 py-2 rounded border text-xs font-semibold cursor-pointer transition-all font-sans shadow-sm flex items-center gap-1.5"
+      ><svg x-show="$store.pac.layers.surface" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><svg x-show="!$store.pac.layers.surface" class="w-3.5 h-3.5 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Thresholds</button>
+    </div>
+
+    <!-- Compact inline legend -->
+    <div x-data class="absolute bottom-7 right-3 z-10 max-md:hidden flex items-center gap-3">
+      <div class="flex items-center gap-2.5">
+        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full inline-block" style="background:#10b981"></span><span class="text-[9px] font-mono text-muted">Pass</span></span>
+        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full inline-block" style="background:#ef4444"></span><span class="text-[9px] font-mono text-muted">Fail</span></span>
+        <span class="text-muted/20">|</span>
+        <span class="text-[9px] font-mono text-muted/50">size = value</span>
+        <span class="flex items-center gap-0.5"><span class="w-1 h-1 rounded-full inline-block bg-muted/30"></span><span class="w-1.5 h-1.5 rounded-full inline-block bg-muted/30"></span><span class="w-2 h-2 rounded-full inline-block bg-muted/30"></span><span class="w-2.5 h-2.5 rounded-full inline-block bg-muted/30"></span></span>
+      </div>
+      <span x-show="!$store.pac.layers.autonomy" class="flex items-center gap-2">
+        <span class="text-muted/20">|</span>
+        <span class="flex items-center gap-1"><span class="w-3 border-t" style="border-color:#93c5fd"></span><span class="text-[9px] font-mono" style="color:#93c5fd">A1</span></span>
+        <span class="flex items-center gap-1"><span class="w-3 border-t border-dashed" style="border-color:#60a5fa"></span><span class="text-[9px] font-mono" style="color:#60a5fa">A2</span></span>
+        <span class="flex items-center gap-1"><span class="w-3 border-t border-dashed" style="border-color:#3b82f6"></span><span class="text-[9px] font-mono" style="color:#3b82f6">A3</span></span>
+        <span class="flex items-center gap-1"><span class="w-3 border-t border-dashed" style="border-color:#2563eb"></span><span class="text-[9px] font-mono" style="color:#2563eb">A4</span></span>
+        <span class="flex items-center gap-1"><span class="w-3 border-t border-dashed" style="border-color:#1d4ed8"></span><span class="text-[9px] font-mono" style="color:#1d4ed8">A5</span></span>
+      </span>
+      <button @click="window.__showHelp && window.__showHelp()" class="w-5 h-5 rounded-full border border-border text-[10px] text-muted/50 flex items-center justify-center cursor-pointer hover:border-muted hover:text-muted transition-all">?</button>
+    </div>
+
+    <div class="absolute bottom-2 right-3 z-10 flex items-center gap-2.5 max-md:hidden">
+      <span class="text-xs text-muted font-mono">drag rotate · scroll zoom</span>
+      <a href="https://github.com/ShaneDeconinck/pac-agent-profiler" target="_blank" class="text-muted hover:text-ink transition-colors" title="GitHub"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <span class="text-[10px] text-muted font-mono">MIT · © trustedagentic.ai</span>
+    </div>
+
+    <!-- Top-right links -->
+    <div class="absolute right-5 top-6 z-20 flex gap-3 max-md:hidden">
+      <a
+        @click.prevent="window.__showIntro && window.__showIntro()"
+        href="#"
+        class="text-xs text-muted hover:text-navy cursor-pointer transition-colors font-mono underline underline-offset-3 decoration-border hover:decoration-navy/40"
+      >Intro</a>
+      <a
+        onclick="document.getElementById('howto-modal').classList.remove('hidden')"
+        href="#"
+        class="text-xs text-muted hover:text-navy cursor-pointer transition-colors font-mono underline underline-offset-3 decoration-border hover:decoration-navy/40"
+      >How to use</a>
+    </div>
+
+    <div class="tip" id="tip"></div>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="md:w-[300px] lg:w-[360px] max-md:w-full bg-sand/60 border-l max-md:border-l-0 max-md:border-t border-border flex flex-col overflow-hidden shrink-0 max-md:h-[45vh]" x-data>
+
+    <!-- Panel header -->
+    <div class="p-4 border-b border-border flex items-center justify-between">
+      <div>
+        <h2 class="text-sm font-semibold text-ink mb-0.5">Use Cases</h2>
+        <div class="text-[11px] text-muted" x-text="$store.pac.caseCount()"></div>
+      </div>
+      <div class="flex gap-1 items-center">
+        <div class="flex gap-1" x-show="$store.pac.mode === 'custom' && !$store.pac.showConfig">
+          <button disabled class="px-2 py-1 rounded text-[10px] border border-border text-muted/40 cursor-not-allowed transition-all" title="Coming soon">Share</button>
+          <button disabled class="px-2 py-1 rounded text-[10px] border border-border text-muted/40 cursor-not-allowed transition-all" title="Coming soon">Export</button>
+          <button disabled class="px-2 py-1 rounded text-[10px] border border-border text-muted/40 cursor-not-allowed transition-all" title="Coming soon">Import</button>
+        </div>
+        <button
+          @click="$store.pac.toggleConfig()"
+          :class="$store.pac.showConfig ? 'border-navy/40 text-navy bg-navy/[0.08]' : 'border-border text-muted hover:text-ink hover:border-muted'"
+          class="w-10 h-10 rounded border text-xl flex items-center justify-center cursor-pointer transition-all"
+          title="Threshold settings"
+        >&#9881;</button>
+      </div>
+    </div>
+
+    <!-- Dataset mode toggle -->
+    <div x-show="!$store.pac.showConfig" class="px-3 py-2.5 border-b border-border flex gap-1.5">
+      <button
+        @click="$store.pac.switchMode('examples')"
+        :class="$store.pac.mode === 'examples'
+          ? 'border-navy/40 text-navy bg-navy/[0.08]'
+          : 'border-border text-muted bg-cream hover:border-muted hover:text-ink'"
+        class="flex-1 py-1.5 rounded-md border text-[11px] font-medium cursor-pointer transition-all font-sans"
+      >
+        Examples
+      </button>
+      <button
+        @click="$store.pac.switchMode('custom')"
+        :class="$store.pac.mode === 'custom'
+          ? 'border-navy/40 text-navy bg-navy/[0.08]'
+          : 'border-border text-muted bg-cream hover:border-muted hover:text-ink'"
+        class="flex-1 py-1.5 rounded-md border text-[11px] font-medium cursor-pointer transition-all font-sans"
+      >
+        Your Cases
+      </button>
+    </div>
+
+    <!-- Config panel -->
+    <div x-show="$store.pac.showConfig" class="flex-1 overflow-y-auto p-3" x-data="{
+      t1: $store.pac.config.thresholds[1] * 100,
+      t2: $store.pac.config.thresholds[2] * 100,
+      t3: $store.pac.config.thresholds[3] * 100,
+      t4: $store.pac.config.thresholds[4] * 100,
+      t5: $store.pac.config.thresholds[5] * 100,
+      esc: $store.pac.config.autonomyEscalation,
+    }">
+      <h3 class="text-xs text-muted tracking-wider uppercase mb-1.5">Autonomy Thresholds</h3>
+      <p class="text-[9px] text-muted/50 mb-3">A1 base threshold per blast radius. A2–A5 computed via escalation.</p>
+
+      <template x-for="item in [{i:1,n:'B1 Contained',k:'t1'},{i:2,n:'B2 Recoverable',k:'t2'},{i:3,n:'B3 Exposed',k:'t3'},{i:4,n:'B4 Regulated',k:'t4'},{i:5,n:'B5 Irreversible',k:'t5'}]" :key="item.i">
+        <div class="mb-2.5">
+          <label class="text-[11px] text-muted mb-1 flex justify-between">
+            <span x-text="item.n"></span>
+            <span class="text-navy font-mono" x-text="parseFloat($data[item.k]).toFixed(1) + '%'"></span>
+          </label>
+          <input type="range" min="70" max="99.9" step="0.1"
+            :x-model.number="item.k"
+            :value="$data[item.k]"
+            @input="$data[item.k] = parseFloat($event.target.value); $store.pac.updateThreshold(item.i, $data[item.k] / 100)"
+            class="w-full">
+          <div class="flex gap-1 mt-0.5">
+            <template x-for="l in [2,3,4,5]" :key="l">
+              <span class="text-[8px] font-mono px-1 py-px rounded"
+                :style="'color:' + ['','','#60a5fa','#3b82f6','#2563eb','#1d4ed8'][l]"
+                x-text="'A' + l + ' ' + $store.pac.thresholdAt(item.i, l) + '%'"></span>
+            </template>
+          </div>
+        </div>
+      </template>
+
+      <h3 class="text-xs text-muted tracking-wider uppercase mt-4 mb-1.5">Autonomy Escalation</h3>
+      <p class="text-[9px] text-muted/50 mb-3">How much stricter each autonomy level gets. Higher = bigger reliability gap between levels.</p>
+      <div class="mb-2.5">
+        <label class="text-[11px] text-muted mb-1 flex justify-between">
+          <span>Strictness</span>
+          <span class="text-navy font-mono" x-text="['','Minimal','Very low','Low','Moderate','Default','Firm','Strict','Very strict','Extreme','Maximum'][Math.round(esc / 0.05)] || ''"></span>
+        </label>
+        <input type="range" min="0.05" max="0.50" step="0.05" x-model.number="esc" @input="$store.pac.updateAutonomyEscalation(esc)" class="w-full">
+      </div>
+
+      <div class="flex gap-2 mt-5">
+        <button
+          @click="$store.pac.resetConfig(); t1=80; t2=90; t3=95; t4=97; t5=99; esc=0.25"
+          class="flex-1 py-2 rounded-lg border border-border text-muted text-xs font-medium cursor-pointer transition-all hover:border-muted hover:text-ink font-sans"
+        >Reset to defaults</button>
+        <button
+          @click="$store.pac.toggleConfig()"
+          class="flex-1 py-2 rounded-lg border border-navy/50 bg-navy/[0.08] text-navy text-xs font-semibold cursor-pointer transition-all hover:bg-navy/15 font-sans"
+        >Done</button>
+      </div>
+    </div>
+
+    <!-- Disclaimer (examples mode) -->
+    <div x-show="$store.pac.mode === 'examples' && !$store.pac.showConfig" class="px-3 py-2 border-b border-border bg-navy/[0.03]">
+      <p class="text-[10px] text-muted/70 leading-relaxed italic">
+        Reliability calibrated from frontier models (Opus 4.6, GPT-5.2, Gemini 3.1) — SWE-bench, &tau;&sup2;-bench, Parseur, PMC. Sources per case.
+      </p>
+    </div>
+
+    <!-- Case list -->
+    <div x-show="!$store.pac.showConfig" x-data="{ selectedCard: -1 }" x-init="window.__panelSelect = (idx) => { selectedCard = idx; if (idx >= 0) { $nextTick(() => { const el = document.getElementById('case-card-' + idx); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }) }) } }" class="case-list flex-1 overflow-y-auto p-2">
+      <template x-if="$store.pac.cases.length === 0">
+        <div class="p-5 text-center text-muted/60 text-xs">
+          Add your first use case below
+        </div>
+      </template>
+      <template x-for="c in $store.pac.cases" :key="c.id">
+        <div class="p-2.5 px-3 rounded-lg border border-border bg-cream mb-1.5 relative cursor-pointer"
+          :id="'case-card-' + $store.pac.cases.indexOf(c)"
+          :class="{ 'ring-1 ring-navy': selectedCard === $store.pac.cases.indexOf(c) }"
+          @click="let idx = $store.pac.cases.indexOf(c); selectedCard = selectedCard === idx ? -1 : idx; window.__threeHighlight && window.__threeHighlight(selectedCard)"
+          @mouseenter="if (selectedCard === -1) { window.__threeHighlight && window.__threeHighlight($store.pac.cases.indexOf(c)) }"
+          @mouseleave="if (selectedCard === -1) { window.__threeHighlight && window.__threeHighlight(-1) }">
+          <div class="font-semibold text-[13px] text-ink mb-1 flex justify-between">
+            <span x-text="c.name"></span>
+            <span x-show="$store.pac.mode === 'custom'" class="flex gap-1.5 items-center">
+              <span @click.stop="$store.pac.editCase(c.id)" class="text-muted text-[10px] cursor-pointer hover:text-navy" title="Edit">✎</span>
+              <span @click.stop="$store.pac.removeCase(c.id)" class="text-muted text-sm cursor-pointer hover:text-viz-red">&times;</span>
+            </span>
+          </div>
+          <div class="flex gap-1 flex-wrap mb-1.5" x-data="{ s: $store.pac.caseStatus(c) }">
+            <span class="text-[10px] px-1.5 py-px rounded bg-muted/10 text-muted font-mono"
+              x-text="'B' + c.impact + ' ' + $store.pac.IMP[c.impact - 1].name"></span>
+            <span class="text-[10px] px-1.5 py-px rounded bg-muted/10 text-muted font-mono"
+              x-text="'V' + (c.bizValue || 1) + ' ' + $store.pac.BIZ[(c.bizValue || 1) - 1].name"></span>
+            <span class="text-[10px] px-1.5 py-px rounded bg-navy/10 text-navy font-mono"
+              x-text="parseFloat(c.reliability).toFixed(1) + '%'"></span>
+            <template x-if="c.spawns && c.deputyResistant">
+              <span class="text-[10px] px-1.5 py-px rounded bg-viz-green/10 text-viz-green font-mono">spawn ✓</span>
+            </template>
+            <template x-if="c.spawns && !c.deputyResistant">
+              <span class="text-[10px] px-1.5 py-px rounded bg-viz-amber/10 text-viz-amber font-mono">spawn ⚠</span>
+            </template>
+            <span class="text-[10px] px-1.5 py-px rounded font-mono"
+              :class="{
+                'bg-viz-amber/10 text-viz-amber': s.status.type === 'aut',
+                'bg-viz-green/10 text-viz-green': s.status.type === 'ok',
+                'bg-viz-red/10 text-viz-red': s.status.type === 'bad',
+              }"
+              x-text="s.status.label"></span>
+            <template x-if="s.ghost">
+              <span class="text-[10px] px-1.5 py-px rounded bg-viz-ghost/10 text-viz-ghost font-mono"
+                x-text="s.ghost.label"></span>
+            </template>
+          </div>
+          <!-- Source (examples mode only) -->
+          <div x-show="$store.pac.mode === 'examples' && c.source" class="text-[8px] text-muted/50 leading-relaxed mt-1 italic" x-text="c.source"></div>
+          <!-- Per-case infrastructure (custom mode only) -->
+          <div x-show="$store.pac.mode === 'custom'" x-data="{ showInfo: false }">
+            <div class="flex items-center gap-1">
+              <span class="text-[9px] text-muted/60 mr-0.5">Infra:</span>
+              <span
+                @click="showInfo = !showInfo"
+                class="w-3 h-3 rounded-full border border-border text-[7px] text-muted/50 flex items-center justify-center cursor-pointer hover:border-muted hover:text-muted transition-all select-none mr-0.5"
+                :class="showInfo ? 'bg-navy/10 border-navy/30 text-navy' : ''"
+              >?</span>
+              <template x-for="l in [1,2,3,4,5]" :key="l">
+                <span
+                  @click="$store.pac.toggleCaseInfra(c.id, l)"
+                  :class="c.infra[l]
+                    ? 'border-viz-green/40 text-viz-green bg-viz-green/[0.06]'
+                    : 'border-border text-muted/40 bg-transparent'"
+                  class="px-1.5 py-px rounded text-[9px] cursor-pointer border transition-all font-mono"
+                  x-text="'I' + l + (c.infra[l] ? '✓' : '')"></span>
+              </template>
+            </div>
+            <div x-show="showInfo" x-transition class="mt-1 p-1.5 rounded bg-cream border border-border text-[8px] text-muted/60 leading-relaxed font-mono">
+              I1 Open · I2 Logged · I3 Verified · I4 Authorized · I5 Contained
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- Add button (custom mode, form closed) -->
+      <div x-show="$store.pac.mode === 'custom' && !$store.pac.showForm" class="mt-1 mb-2">
+        <button
+          @click="$store.pac.showForm = true"
+          class="w-full py-2 rounded-lg border border-border bg-cream text-muted text-xs font-semibold cursor-pointer transition-all hover:border-navy hover:text-navy font-sans"
+        >+ Add use case</button>
+      </div>
+
+      <!-- Add form (custom mode, inside scrollable area) -->
+      <div x-show="$store.pac.mode === 'custom' && $store.pac.showForm" x-transition class="mt-1 mb-2 p-3 rounded-lg border border-border bg-cream">
+        <div class="flex justify-between items-center mb-2.5">
+          <h3 class="text-xs text-muted tracking-wider uppercase">+ Add Case</h3>
+          <span @click="$store.pac.showForm = false" class="text-muted text-sm cursor-pointer hover:text-viz-red">&times;</span>
+        </div>
+
+        <div class="mb-2.5">
+          <label class="text-[11px] text-muted mb-1 block">Name</label>
+          <input
+            x-model="$store.pac.form.name"
+            @keydown.enter="$store.pac.addCase()"
+            type="text"
+            placeholder="e.g. Customer email agent"
+            class="w-full py-1.5 px-2.5 rounded-md border border-border bg-sand/40 text-ink text-xs font-sans outline-none focus:border-navy"
+          >
+        </div>
+
+        <div class="mb-2.5">
+          <label class="text-[11px] text-muted mb-1 block">Business Value</label>
+          <div class="flex gap-0">
+            <template x-for="bv in [{v:1,l:'V1',sub:'Incremental'},{v:2,l:'V2',sub:'Operational'},{v:3,l:'V3',sub:'Strategic'},{v:4,l:'V4',sub:'Transform',hi:true}]" :key="bv.v">
+              <span
+                @click="$store.pac.setBizValue(bv.v)"
+                :class="$store.pac.form.bizValue === bv.v
+                  ? (bv.hi ? 'border-viz-amber/40 text-viz-amber bg-viz-amber/[0.08] z-10' : 'border-navy/40 text-navy bg-navy/[0.08] z-10')
+                  : 'border-border text-muted bg-sand/40'"
+                class="flex-1 py-1.5 border text-center text-[10px] cursor-pointer transition-all select-none first:rounded-l-md last:rounded-r-md -ml-px first:ml-0"
+              >
+                <div class="font-semibold" x-text="bv.l"></div>
+                <div class="text-[8px] opacity-70" x-text="bv.sub"></div>
+              </span>
+            </template>
+          </div>
+        </div>
+
+        <div class="mb-2.5">
+          <label class="text-[11px] text-muted mb-1 block">Blast Radius (if it goes wrong)</label>
+          <div class="flex gap-0">
+            <template x-for="imp in [{v:1,l:'B1',sub:'Contained'},{v:2,l:'B2',sub:'Recoverable'},{v:3,l:'B3',sub:'Exposed'},{v:4,l:'B4',sub:'Regulated',hi:true},{v:5,l:'B5',sub:'Irreversible',hi:true}]" :key="imp.v">
+              <span
+                @click="$store.pac.setImpact(imp.v)"
+                :class="$store.pac.form.impact === imp.v
+                  ? (imp.hi ? 'border-viz-red/40 text-viz-red bg-viz-red/[0.08] z-10' : 'border-navy/40 text-navy bg-navy/[0.08] z-10')
+                  : 'border-border text-muted bg-sand/40'"
+                class="flex-1 py-1.5 border text-center text-[10px] cursor-pointer transition-all select-none first:rounded-l-md last:rounded-r-md -ml-px first:ml-0"
+              >
+                <div class="font-semibold" x-text="imp.l"></div>
+                <div class="text-[8px] opacity-70" x-text="imp.sub"></div>
+              </span>
+            </template>
+          </div>
+          <div class="text-[8px] text-muted/50 mt-1 italic" x-text="$store.pac.IMP[$store.pac.form.impact - 1].d + ' — e.g. ' + $store.pac.IMP[$store.pac.form.impact - 1].ex"></div>
+        </div>
+
+        <div class="mb-2.5">
+          <label class="text-[11px] text-muted mb-1 block">Reliability</label>
+          <div class="flex items-center gap-2">
+            <input
+              type="range" min="70" max="99.9" step="0.1"
+              x-model.number="$store.pac.form.reliability"
+              class="flex-1"
+            >
+            <span class="text-[11px] text-navy min-w-[40px] text-right font-mono"
+              x-text="parseFloat($store.pac.form.reliability).toFixed(1) + '%'"></span>
+          </div>
+        </div>
+
+        <div class="mb-2.5" x-data="{ showInfraInfo: false }">
+          <label class="text-[11px] text-muted mb-1 flex items-center gap-1.5">
+            Infrastructure safeguards
+            <span
+              @click="showInfraInfo = !showInfraInfo"
+              class="w-4 h-4 rounded-full border border-border text-[9px] text-muted/60 flex items-center justify-center cursor-pointer hover:border-muted hover:text-muted transition-all select-none"
+              :class="showInfraInfo ? 'bg-navy/10 border-navy/30 text-navy' : ''"
+            >?</span>
+          </label>
+          <div x-show="showInfraInfo" x-transition class="mb-1.5 p-2 rounded-md bg-sand/40 border border-border text-[9px] text-muted/70 leading-relaxed font-mono">
+            <div class="mb-0.5"><span class="text-muted">I1 — Open:</span> Bare model output</div>
+            <div class="mb-0.5"><span class="text-muted">I2 — Logged:</span> Audit trail</div>
+            <div class="mb-0.5"><span class="text-muted">I3 — Verified:</span> + Identity & provenance</div>
+            <div class="mb-0.5"><span class="text-muted">I4 — Authorized:</span> + Positive authority grants</div>
+            <div><span class="text-muted">I5 — Contained:</span> + Sandbox & isolation</div>
+          </div>
+          <div class="flex gap-0">
+            <template x-for="inf in [{l:1,name:'Open'},{l:2,name:'Logged'},{l:3,name:'Verified'},{l:4,name:'Authorized'},{l:5,name:'Contained'}]" :key="inf.l">
+              <span
+                @click="$store.pac.toggleFormInfra(inf.l)"
+                :class="$store.pac.form.infra[inf.l]
+                  ? 'border-viz-green/40 text-viz-green bg-viz-green/[0.06] z-10'
+                  : 'border-border text-muted bg-sand/40'"
+                class="flex-1 py-1.5 border text-center text-[10px] cursor-pointer transition-all select-none first:rounded-l-md last:rounded-r-md -ml-px first:ml-0"
+              >
+                <div class="font-semibold" x-text="'I' + inf.l"></div>
+                <div class="text-[8px] opacity-70" x-text="inf.name"></div>
+              </span>
+            </template>
+          </div>
+        </div>
+
+        <div class="mb-2.5">
+          <label class="flex items-center gap-2 p-1.5 px-2 bg-viz-amber/[0.04] border border-viz-amber/[0.15] rounded-md cursor-pointer">
+            <input type="checkbox" x-model="$store.pac.form.spawns" class="w-3.5 h-3.5">
+            <span class="text-[11px] text-muted">Spawns other agents</span>
+          </label>
+          <label x-show="$store.pac.form.spawns" x-transition class="flex items-center gap-2 p-1.5 px-2 mt-1 ml-4 bg-viz-green/[0.04] border border-viz-green/[0.15] rounded-md cursor-pointer">
+            <input type="checkbox" x-model="$store.pac.form.deputyResistant" class="w-3.5 h-3.5">
+            <span class="text-[11px] text-muted">Confused deputy resistant</span>
+          </label>
+        </div>
+
+        <button
+          @click="$store.pac.addCase()"
+          class="w-full py-2 rounded-lg border border-border bg-sand/40 text-muted text-xs font-semibold cursor-pointer transition-all hover:border-navy hover:text-navy font-sans"
+        >+ Add use case</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="import-file-input" accept=".json" class="hidden">
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

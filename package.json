@@ -1,0 +1,37 @@
+{
+  "name": "pac-risk-assessment",
+  "version": "0.1.0",
+  "description": "Interactive agent risk assessment tool for the PAC Framework. Three inputs. Three dimensions. One actionable answer.",
+  "author": "Shane Deconinck <shane@trustedagentic.ai>",
+  "license": "Apache-2.0",
+  "homepage": "https://trustedagentic.ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shanedeconinck/pac-risk-assessment.git"
+  },
+  "keywords": [
+    "ai-agents",
+    "risk-assessment",
+    "governance",
+    "pac-framework",
+    "agentic-ai",
+    "enterprise",
+    "trust",
+    "autonomy"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6",
+    "@tailwindcss/vite": "^4",
+    "tailwindcss": "^4"
+  },
+  "dependencies": {
+    "alpinejs": "^3",
+    "three": "^0.172"
+  }
+}
