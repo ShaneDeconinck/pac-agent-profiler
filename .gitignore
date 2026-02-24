@@ -5,6 +5,7 @@ dist/
 .env
 .env.*
 .vite/
-*.png
+/*.png
+/screenshots/*.png
 .playwright-mcp/
 .claude/

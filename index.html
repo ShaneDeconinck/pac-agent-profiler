@@ -101,18 +101,28 @@
           </a>
           <span class="text-xs text-white/30 font-mono">MIT License &middot; &copy; trustedagentic.ai &middot; Shane Deconinck</span>
         </div>
-        <p class="text-[10px] text-white/20 font-mono">Agentically engineered w/ Claude Code &amp; Opus 4.6</p>
+
       </div>
     </div>
   </div>
 </div>
 
 <!-- Mobile notice -->
-<div class="md:hidden fixed inset-0 z-40 bg-cream flex items-center justify-center p-8 text-center">
-  <div>
-    <h2 class="text-lg font-bold text-ink mb-3" style="font-family:'Space Grotesk',sans-serif">Agent Profiler</h2>
-    <p class="text-sm text-muted leading-relaxed mb-4">This tool is best experienced on a tablet or larger screen (1024px+).</p>
-    <a href="https://trustedagentic.ai" class="text-xs text-navy underline underline-offset-3 font-mono">trustedagentic.ai</a>
+<div class="md:hidden fixed inset-0 z-40 bg-cream flex items-center justify-center p-6 text-center overflow-y-auto">
+  <div class="max-w-sm">
+    <p class="text-sm mb-6" style="font-family:'Space Grotesk',sans-serif;letter-spacing:0.5px">
+      <span class="text-ink/40">trusted</span><span class="text-navy">agentic</span><span class="text-ink/40">.ai</span>
+    </p>
+    <h2 class="text-xl font-bold text-ink mb-2" style="font-family:'Space Grotesk',sans-serif">Agent Profiler</h2>
+    <p class="text-sm text-muted leading-relaxed mb-5">Map agent use cases across six dimensions — blast radius, reliability, business value, governance, infrastructure, and autonomy.</p>
+    <img src="/screenshots/02-3d-autonomy.png" alt="Agent Profiler — 3D risk assessment" class="w-full rounded border border-border mb-5" onerror="this.style.display='none'">
+    <p class="text-xs text-muted leading-relaxed mb-5">The interactive 3D profiler is built for larger screens. Save the link and explore on desktop or tablet.</p>
+    <button
+      onclick="navigator.clipboard.writeText('https://profiler.trustedagentic.ai').then(()=>{this.textContent='Link copied!';this.style.background='#10b981'})"
+      class="w-full py-3 px-6 text-white text-sm font-semibold cursor-pointer font-sans rounded"
+      style="background:#2d4a6f"
+    >Copy link for later</button>
+    <a href="https://trustedagentic.ai" class="block mt-4 text-xs text-muted underline underline-offset-3 font-mono">trustedagentic.ai</a>
   </div>
 </div>
 

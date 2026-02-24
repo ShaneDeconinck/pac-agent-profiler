@@ -1,6 +1,6 @@
 # PAC Agent Profiler
 
-> **v0.1** — It's not perfect, but it's useful. PRs welcome. Agentically engineered with [Claude Code](https://claude.ai/claude-code) & Opus 4.6.
+> **v0.1** — It's not perfect, but it's useful. PRs welcome.
 
 Interactive 3D risk assessment tool built for [trustedagentic.ai](https://trustedagentic.ai). Part of the [PAC Framework](https://shanedeconinck.be/framework) (Potential, Accountability, Control) — a governance model for AI agents that helps enterprise decision-makers answer: **may this agent do this thing, and what do I need to build for that?**
 
