@@ -1,10 +1,10 @@
 import {
   Scene, PerspectiveCamera, WebGLRenderer,
-  AmbientLight, DirectionalLight, Vector3,
+  AmbientLight, DirectionalLight, Vector3, Vector2,
   LineBasicMaterial, BufferGeometry, Line,
   SphereGeometry, MeshPhongMaterial, Mesh,
   MeshBasicMaterial, ShaderMaterial, PlaneGeometry, DoubleSide,
-  Color,
+  Color, Raycaster,
 } from 'three'
 import { S, cell, gp } from './scene.js'
 import { relToZ, reqRelForAutonomy } from '../utils/risk-calc.js'
@@ -175,6 +175,7 @@ export function initIntroScene(container) {
     })
     const ipMesh = new Mesh(ipg, ipMat)
     ipMesh.position.set(S / 2, y, S / 2)
+    ipMesh.userData.dim = 'infrastructure'
     scene.add(ipMesh)
     infraGradientMats.push(ipMat)
     // Track for highlighting (use opacity uniform)
@@ -210,6 +211,7 @@ export function initIntroScene(container) {
       new MeshPhongMaterial({ color: col, emissive: col, emissiveIntensity: 0.5, transparent: true, opacity: 1 }),
     )
     m.position.set(x, y, z)
+    m.userData.dim = 'businessValue'
     scene.add(m)
     dotMeshes.push(m)
     scene.add(new Line(
@@ -246,6 +248,7 @@ export function initIntroScene(container) {
           side: DoubleSide, depthWrite: false,
         }))
         sm.position.set(xL + cell / 2, y + 0.005, z + zLen / 2)
+        sm.userData.dim = 'governance'
         scene.add(sm)
         surfMeshes.push({ mesh: sm, origOp: shelfOp })
       }
@@ -258,6 +261,7 @@ export function initIntroScene(container) {
           side: DoubleSide, depthWrite: false,
         }))
         rm.position.set(xL + cell / 2, yPrev + riserH / 2, z)
+        rm.userData.dim = 'governance'
         scene.add(rm)
         surfMeshes.push({ mesh: rm, origOp: shelfOp + 0.03 })
       }
@@ -344,6 +348,56 @@ export function initIntroScene(container) {
     updateCamera()
   }, { passive: true })
   el.addEventListener('touchend', () => { dragging = false })
+
+  // --- Invisible hit-zone planes for axis raycasting ---
+  const hitMat = new MeshBasicMaterial({ visible: false, side: DoubleSide })
+  // Reliability: strip along Z axis (floor, near X=0)
+  const relHit = new Mesh(new PlaneGeometry(0.4, S).rotateX(-Math.PI / 2), hitMat)
+  relHit.position.set(0, 0.01, S / 2)
+  relHit.userData.dim = 'reliability'
+  scene.add(relHit)
+  // Blast radius: strip along X axis (floor, near Z=0)
+  const brHit = new Mesh(new PlaneGeometry(S, 0.4).rotateX(-Math.PI / 2), hitMat)
+  brHit.position.set(S / 2, 0.01, 0)
+  brHit.userData.dim = 'blastRadius'
+  scene.add(brHit)
+  // Autonomy: strip along Y axis (wall at X=0, Z=0)
+  const autHit = new Mesh(new PlaneGeometry(0.4, S), hitMat)
+  autHit.position.set(0, S / 2, 0)
+  autHit.userData.dim = 'autonomy'
+  scene.add(autHit)
+
+  // --- Raycasting: 3D hover → list highlight ---
+  const raycaster = new Raycaster()
+  const pointer = new Vector2()
+  let rayHoveredDim = null
+
+  el.addEventListener('pointermove', e => {
+    if (dragging) return
+    const rect = el.getBoundingClientRect()
+    pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
+    pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1
+    raycaster.setFromCamera(pointer, camera)
+    const hits = raycaster.intersectObjects(scene.children, false)
+    let dim = null
+    for (const hit of hits) {
+      if (hit.object.userData.dim) { dim = hit.object.userData.dim; break }
+    }
+    if (dim !== rayHoveredDim) {
+      rayHoveredDim = dim
+      highlight(dim)
+      // Sync Alpine list highlight
+      if (window.__introCycleHL) window.__introCycleHL(dim)
+    }
+  })
+
+  el.addEventListener('pointerleave', () => {
+    if (rayHoveredDim) {
+      rayHoveredDim = null
+      highlight(null)
+      if (window.__introCycleHL) window.__introCycleHL(null)
+    }
+  })
 
   // --- HTML overlay labels ---
   const labelsDiv = document.createElement('div')
