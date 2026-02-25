@@ -12,7 +12,7 @@ import {
 import { S, cell, gp } from './scene.js'
 import { addLine } from './helpers.js'
 
-const COL = 0x5c6a78 // neutral muted
+const COL = 0x78716c // warm stone
 
 // Infrastructure gate reference planes at each autonomy level
 export function buildInfraLayer() {

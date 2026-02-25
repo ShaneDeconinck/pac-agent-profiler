@@ -68,13 +68,13 @@ export function createLabels(container, camera, renderer) {
 
   // --- Infrastructure axis + gate labels (infra layer only) ---
   addLabel([S + 0.15, S + 0.25, S + 0.15], 'INFRASTRUCTURE ↑', {
-    color: '#5c6a78', size: 11, weight: 700, group: 'infra', hidden: true,
+    color: '#78716c', size: 11, weight: 700, group: 'infra', hidden: true,
   })
 
   const INFRA_NAMES = { 1: 'Open', 2: 'Logged', 3: 'Verified', 4: 'Authorized', 5: 'Contained' }
   for (let l = 1; l <= 5; l++) {
     addLabel([S + 0.15, gp(l), S + 0.15], `I${l} ${INFRA_NAMES[l]}`, {
-      color: '#5c6a78', size: 9, group: 'infra', hidden: true,
+      color: '#78716c', size: 9, group: 'infra', hidden: true,
     })
   }
 

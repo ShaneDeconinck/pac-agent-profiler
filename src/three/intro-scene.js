@@ -9,12 +9,12 @@ import { S, cell, gp } from './scene.js'
 import { relToZ, reqRelForAutonomy } from '../utils/risk-calc.js'
 
 const DIM_CSS = {
-  reliability: '#06b6d4',
-  blastRadius: '#f59e0b',
-  autonomy: '#a78bfa',
-  businessValue: '#fbbf24',
-  governance: '#3b82f6',
-  infrastructure: '#64748b',
+  reliability: '#0891b2',
+  blastRadius: '#c2410c',
+  autonomy: '#7c3aed',
+  businessValue: '#ca8a04',
+  governance: '#2563eb',
+  infrastructure: '#78716c',
 }
 
 export function initIntroScene(container) {
@@ -31,7 +31,7 @@ export function initIntroScene(container) {
   scene.add(dl)
 
   // Floor grid
-  const gridMat = new LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.12 })
+  const gridMat = new LineBasicMaterial({ color: 0x1e2a3a, transparent: true, opacity: 0.10 })
   for (let i = 0; i <= 5; i++) {
     const p = i * cell
     scene.add(new Line(new BufferGeometry().setFromPoints([new Vector3(p, 0, 0), new Vector3(p, 0, S)]), gridMat))
@@ -127,7 +127,7 @@ export function initIntroScene(container) {
   }
 
   // --- Infrastructure: full-size planes at each level (I1-I5) ---
-  const INFRA_COL = 0x64748b
+  const INFRA_COL = 0x78716c
   addAxisLine('infrastructure', [S, 0, S], [S, S + 0.3, S], INFRA_COL, 0.4)
   for (let l = 1; l <= 5; l++) {
     const y = l * cell // top of each autonomy cell, matching main scene
@@ -168,7 +168,7 @@ export function initIntroScene(container) {
     const x = gp(d.imp), y = gp(d.aut), z = relToZ(d.rel, S)
     const m = new Mesh(
       new SphereGeometry(r, 10, 10),
-      new MeshPhongMaterial({ color: col, emissive: col, emissiveIntensity: 0.5, transparent: true, opacity: 1 }),
+      new MeshPhongMaterial({ color: col, emissive: col, emissiveIntensity: 0.25, transparent: true, opacity: 0.8 }),
     )
     m.position.set(x, y, z)
     scene.add(m)
@@ -321,7 +321,6 @@ export function initIntroScene(container) {
       font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:10px;
       color:${css};opacity:0;transition:opacity 0.3s;
       transform:translate(-50%,-50%);
-      text-shadow:0 0 20px ${css};
     `
     labelsDiv.appendChild(el)
     dimLabels[dim] = { el, pos: new Vector3(...worldPos) }
@@ -345,10 +344,12 @@ export function initIntroScene(container) {
 
   // --- Highlight API (additive — brightens hovered, keeps rest visible) ---
   function applyHighlight(dim) {
-    // Axis/element materials — brighten matched, leave others as-is
+    // Axis/element materials — brighten matched, dim others
     Object.entries(dimMats).forEach(([key, items]) => {
       items.forEach(({ mat, origOp }) => {
-        mat.opacity = (dim && key === dim) ? Math.min(1, origOp * 3) : origOp
+        if (!dim) { mat.opacity = origOp }
+        else if (key === dim) { mat.opacity = Math.min(1, origOp * 4) }
+        else { mat.opacity = origOp * 0.4 }
       })
     })
 
@@ -362,20 +363,20 @@ export function initIntroScene(container) {
       el.style.opacity = key === dim ? '1' : '0'
     })
 
-    // Dots — pulse on businessValue, otherwise no change
+    // Dots — pulse on businessValue, otherwise restore
     dotMeshes.forEach(m => {
       if (dim === 'businessValue') {
-        m.scale.setScalar(1.6)
-        m.material.emissiveIntensity = 0.8
+        m.scale.setScalar(1.5)
+        m.material.emissiveIntensity = 0.4
       } else {
         m.scale.setScalar(1)
-        m.material.emissiveIntensity = 0.5
+        m.material.emissiveIntensity = 0.25
       }
     })
 
     // Surface shelves — brighten on governance
     surfMeshes.forEach(({ mesh, origOp }) => {
-      mesh.material.opacity = (dim === 'governance') ? Math.min(0.25, origOp * 4) : origOp
+      mesh.material.opacity = (dim === 'governance') ? Math.min(0.35, origOp * 3) : origOp
     })
   }
 
@@ -389,7 +390,7 @@ export function initIntroScene(container) {
   let userHovering = false
 
   function softShow(dim) {
-    // Only fade in the label + faint glow plane — leave scene untouched
+    // Only fade in the label + faint glow plane — leave list items untouched
     Object.entries(dimLabels).forEach(([key, { el }]) => {
       el.style.opacity = key === dim ? '0.7' : '0'
     })
@@ -397,13 +398,11 @@ export function initIntroScene(container) {
       mesh.visible = key === dim
       if (mesh.material) mesh.material.opacity = 0.06
     })
-    if (window.__introCycleHL) window.__introCycleHL(dim)
   }
 
   function softHide() {
     Object.values(dimLabels).forEach(({ el }) => { el.style.opacity = '0' })
     Object.values(glows).forEach(mesh => { mesh.visible = false })
-    if (window.__introCycleHL) window.__introCycleHL(null)
   }
 
   function cycleNext() {
