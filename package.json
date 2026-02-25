@@ -1,5 +1,5 @@
 {
-  "name": "pac-risk-assessment",
+  "name": "pac-agent-profiler",
   "version": "0.1.0",
   "description": "Interactive agent risk assessment tool for the PAC Framework. Three inputs. Three dimensions. One actionable answer.",
   "author": "Shane Deconinck <shane@trustedagentic.ai>",
@@ -20,9 +20,22 @@
     "autonomy"
   ],
   "type": "module",
+  "main": "dist-lib/pac-profiler.umd.js",
+  "module": "dist-lib/pac-profiler.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist-lib/pac-profiler.es.js",
+      "require": "./dist-lib/pac-profiler.umd.js"
+    },
+    "./style.css": "./dist-lib/pac-profiler.css"
+  },
+  "files": [
+    "dist-lib"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:lib": "vite build --mode lib",
     "preview": "vite preview"
   },
   "devDependencies": {

@@ -1,0 +1,323 @@
+<!-- PAC Agent Profiler — Panel template (library) -->
+<div class="bg-sand/60 border-l max-md:border-l-0 max-md:border-t border-border flex flex-col overflow-hidden text-ink font-sans" style="height:100%" x-data>
+
+  <!-- Panel header -->
+  <div class="p-4 border-b border-border flex items-center justify-between">
+    <div>
+      <h2 class="text-sm font-semibold text-ink mb-0.5">Use Cases</h2>
+      <div class="text-[11px] text-muted" x-text="$store.pac.caseCount()"></div>
+    </div>
+    <div class="flex gap-1 items-center">
+      <div class="flex gap-1" x-show="$store.pac.mode === 'custom' && !$store.pac.showConfig" x-data="{ shared: false }">
+        <button
+          @click="$store.pac.shareLink(); shared = true; setTimeout(() => shared = false, 2000)"
+          :class="shared
+            ? 'border-viz-green/40 text-viz-green bg-viz-green/[0.06]'
+            : 'border-border text-muted hover:text-navy hover:border-navy/30'"
+          class="px-2 py-1 rounded text-[10px] border cursor-pointer transition-all"
+          :title="shared ? 'Link copied!' : 'Share a link that loads with your cases & settings'"
+          x-text="shared ? 'Copied!' : 'Share w/ your data'"></button>
+        <button disabled class="px-2 py-1 rounded text-[10px] border border-border text-muted/40 cursor-not-allowed transition-all" title="Coming soon">Export</button>
+        <button disabled class="px-2 py-1 rounded text-[10px] border border-border text-muted/40 cursor-not-allowed transition-all" title="Coming soon">Import</button>
+      </div>
+      <button
+        @click="$store.pac.toggleConfig()"
+        :class="$store.pac.showConfig ? 'border-navy/40 text-navy bg-navy/[0.08]' : 'border-border text-muted hover:text-ink hover:border-muted'"
+        class="w-10 h-10 rounded border text-xl flex items-center justify-center cursor-pointer transition-all"
+        title="Threshold settings"
+      >&#9881;</button>
+    </div>
+  </div>
+
+  <!-- Dataset mode toggle -->
+  <div x-show="!$store.pac.showConfig" class="px-3 py-2.5 border-b border-border flex gap-1.5">
+    <button
+      @click="$store.pac.switchMode('examples')"
+      :class="$store.pac.mode === 'examples'
+        ? 'border-navy/40 text-navy bg-navy/[0.08]'
+        : 'border-border text-muted bg-cream hover:border-muted hover:text-ink'"
+      class="flex-1 py-1.5 rounded-md border text-[11px] font-medium cursor-pointer transition-all font-sans"
+    >
+      Examples
+    </button>
+    <button
+      @click="$store.pac.switchMode('custom')"
+      :class="$store.pac.mode === 'custom'
+        ? 'border-navy/40 text-navy bg-navy/[0.08]'
+        : 'border-border text-muted bg-cream hover:border-muted hover:text-ink'"
+      class="flex-1 py-1.5 rounded-md border text-[11px] font-medium cursor-pointer transition-all font-sans"
+    >
+      Your Cases
+    </button>
+  </div>
+
+  <!-- Config panel -->
+  <div x-show="$store.pac.showConfig" class="flex-1 overflow-y-auto p-3" x-data="{
+    t1: $store.pac.config.thresholds[1] * 100,
+    t2: $store.pac.config.thresholds[2] * 100,
+    t3: $store.pac.config.thresholds[3] * 100,
+    t4: $store.pac.config.thresholds[4] * 100,
+    t5: $store.pac.config.thresholds[5] * 100,
+    esc: $store.pac.config.autonomyEscalation,
+  }">
+    <h3 class="text-xs text-muted tracking-wider uppercase mb-1.5">Autonomy Thresholds</h3>
+    <p class="text-[9px] text-muted/50 mb-3">A1 base threshold per blast radius. A2-A5 computed via escalation.</p>
+
+    <template x-for="item in [{i:1,n:'B1 Contained',k:'t1'},{i:2,n:'B2 Recoverable',k:'t2'},{i:3,n:'B3 Exposed',k:'t3'},{i:4,n:'B4 Regulated',k:'t4'},{i:5,n:'B5 Irreversible',k:'t5'}]" :key="item.i">
+      <div class="mb-2.5">
+        <label class="text-[11px] text-muted mb-1 flex justify-between">
+          <span x-text="item.n"></span>
+          <span class="text-navy font-mono" x-text="parseFloat($data[item.k]).toFixed(1) + '%'"></span>
+        </label>
+        <input type="range" min="70" max="99.9" step="0.1"
+          :x-model.number="item.k"
+          :value="$data[item.k]"
+          @input="$data[item.k] = parseFloat($event.target.value); $store.pac.updateThreshold(item.i, $data[item.k] / 100)"
+          class="w-full">
+        <div class="flex gap-1 mt-0.5">
+          <template x-for="l in [2,3,4,5]" :key="l">
+            <span class="text-[8px] font-mono px-1 py-px rounded"
+              :style="'color:' + ['','','#60a5fa','#3b82f6','#2563eb','#1d4ed8'][l]"
+              x-text="'A' + l + ' ' + $store.pac.thresholdAt(item.i, l) + '%'"></span>
+          </template>
+        </div>
+      </div>
+    </template>
+
+    <h3 class="text-xs text-muted tracking-wider uppercase mt-4 mb-1.5">Autonomy Escalation</h3>
+    <p class="text-[9px] text-muted/50 mb-3">How much stricter each autonomy level gets. Higher = bigger reliability gap between levels.</p>
+    <div class="mb-2.5">
+      <label class="text-[11px] text-muted mb-1 flex justify-between">
+        <span>Strictness</span>
+        <span class="text-navy font-mono" x-text="['','Minimal','Very low','Low','Moderate','Default','Firm','Strict','Very strict','Extreme','Maximum'][Math.round(esc / 0.05)] || ''"></span>
+      </label>
+      <input type="range" min="0.05" max="0.50" step="0.05" x-model.number="esc" @input="$store.pac.updateAutonomyEscalation(esc)" class="w-full">
+    </div>
+
+    <div class="flex gap-2 mt-5">
+      <button
+        @click="$store.pac.resetConfig(); t1=80; t2=90; t3=95; t4=97; t5=99; esc=0.25"
+        class="flex-1 py-2 rounded-lg border border-border text-muted text-xs font-medium cursor-pointer transition-all hover:border-muted hover:text-ink font-sans"
+      >Reset to defaults</button>
+      <button
+        @click="$store.pac.toggleConfig()"
+        class="flex-1 py-2 rounded-lg border border-navy/50 bg-navy/[0.08] text-navy text-xs font-semibold cursor-pointer transition-all hover:bg-navy/15 font-sans"
+      >Done</button>
+    </div>
+  </div>
+
+  <!-- Disclaimer (examples mode) -->
+  <div x-show="$store.pac.mode === 'examples' && !$store.pac.showConfig" class="px-3 py-2 border-b border-border bg-navy/[0.03]">
+    <p class="text-[10px] text-muted/70 leading-relaxed italic">
+      Reliability calibrated from frontier models (Opus 4.6, GPT-5.2, Gemini 3.1) &mdash;
+      <a href="https://www.swebench.com" target="_blank" rel="noopener" class="text-navy/70 hover:text-navy underline decoration-navy/30 hover:decoration-navy">SWE-bench</a>,
+      <a href="https://metr.github.io/tau-bench/" target="_blank" rel="noopener" class="text-navy/70 hover:text-navy underline decoration-navy/30 hover:decoration-navy">&tau;&sup2;-bench</a>,
+      Parseur, PMC. Sources per case.
+    </p>
+  </div>
+
+  <!-- Case list -->
+  <div x-show="!$store.pac.showConfig" x-data="{ selectedCard: -1 }" x-init="window.__panelSelect = (idx) => { selectedCard = idx; if (idx >= 0) { $nextTick(() => { const el = document.getElementById('case-card-' + idx); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }) }) } }" class="case-list flex-1 overflow-y-auto p-2">
+    <template x-if="$store.pac.cases.length === 0">
+      <div class="p-5 text-center text-muted/60 text-xs">
+        Add your first use case below
+      </div>
+    </template>
+    <template x-for="c in $store.pac.cases" :key="c.id">
+      <div class="p-2.5 px-3 rounded-lg border border-border bg-cream mb-1.5 relative cursor-pointer"
+        :id="'case-card-' + $store.pac.cases.indexOf(c)"
+        :class="{ 'ring-1 ring-navy': selectedCard === $store.pac.cases.indexOf(c) }"
+        @click="let idx = $store.pac.cases.indexOf(c); selectedCard = selectedCard === idx ? -1 : idx; window.__threeHighlight && window.__threeHighlight(selectedCard)"
+        @mouseenter="if (selectedCard === -1) { window.__threeHighlight && window.__threeHighlight($store.pac.cases.indexOf(c)) }"
+        @mouseleave="if (selectedCard === -1) { window.__threeHighlight && window.__threeHighlight(-1) }">
+        <div class="font-semibold text-[13px] text-ink mb-1 flex justify-between">
+          <span x-text="c.name"></span>
+          <span x-show="$store.pac.mode === 'custom'" class="flex gap-1.5 items-center">
+            <span @click.stop="$store.pac.editCase(c.id)" class="text-muted text-[10px] cursor-pointer hover:text-navy" title="Edit">&#9998;</span>
+            <span @click.stop="$store.pac.removeCase(c.id)" class="text-muted text-sm cursor-pointer hover:text-viz-red">&times;</span>
+          </span>
+        </div>
+        <div class="flex gap-1 flex-wrap mb-1.5" x-data="{ s: $store.pac.caseStatus(c) }">
+          <span class="text-[10px] px-1.5 py-px rounded bg-muted/10 text-muted font-mono"
+            x-text="'B' + c.impact + ' ' + $store.pac.IMP[c.impact - 1].name"></span>
+          <span class="text-[10px] px-1.5 py-px rounded bg-muted/10 text-muted font-mono"
+            x-text="'V' + (c.bizValue || 1) + ' ' + $store.pac.BIZ[(c.bizValue || 1) - 1].name"></span>
+          <span class="text-[10px] px-1.5 py-px rounded bg-navy/10 text-navy font-mono"
+            x-text="parseFloat(c.reliability).toFixed(1) + '%'"></span>
+          <template x-if="c.spawns && c.deputyResistant">
+            <span class="text-[10px] px-1.5 py-px rounded bg-viz-green/10 text-viz-green font-mono">spawn &#10003;</span>
+          </template>
+          <template x-if="c.spawns && !c.deputyResistant">
+            <span class="text-[10px] px-1.5 py-px rounded bg-viz-amber/10 text-viz-amber font-mono">spawn &#9888;</span>
+          </template>
+          <span class="text-[10px] px-1.5 py-px rounded font-mono"
+            :class="{
+              'bg-viz-amber/10 text-viz-amber': s.status.type === 'aut',
+              'bg-viz-green/10 text-viz-green': s.status.type === 'ok',
+              'bg-viz-red/10 text-viz-red': s.status.type === 'bad',
+            }"
+            x-text="s.status.label"></span>
+          <template x-if="s.ghost">
+            <span class="text-[10px] px-1.5 py-px rounded bg-viz-ghost/10 text-viz-ghost font-mono"
+              x-text="s.ghost.label"></span>
+          </template>
+        </div>
+        <!-- Source (examples mode only) -->
+        <div x-show="$store.pac.mode === 'examples' && c.source" class="text-[8px] text-muted/50 leading-relaxed mt-1 italic flex items-start gap-1">
+          <span x-text="c.source" class="flex-1"></span>
+          <a x-show="c.sourceUrl" :href="c.sourceUrl" target="_blank" rel="noopener"
+            class="shrink-0 text-[8px] text-navy/60 hover:text-navy underline decoration-navy/30 hover:decoration-navy not-italic"
+            @click.stop>source &#8599;</a>
+        </div>
+        <!-- Per-case infrastructure (custom mode only) -->
+        <div x-show="$store.pac.mode === 'custom'" x-data="{ showInfo: false }">
+          <div class="flex items-center gap-1">
+            <span class="text-[9px] text-muted/60 mr-0.5">Infra:</span>
+            <span
+              @click="showInfo = !showInfo"
+              class="w-3 h-3 rounded-full border border-border text-[7px] text-muted/50 flex items-center justify-center cursor-pointer hover:border-muted hover:text-muted transition-all select-none mr-0.5"
+              :class="showInfo ? 'bg-navy/10 border-navy/30 text-navy' : ''"
+            >?</span>
+            <template x-for="l in [1,2,3,4,5]" :key="l">
+              <span
+                @click="$store.pac.toggleCaseInfra(c.id, l)"
+                :class="c.infra[l]
+                  ? 'border-viz-green/40 text-viz-green bg-viz-green/[0.06]'
+                  : 'border-border text-muted/40 bg-transparent'"
+                class="px-1.5 py-px rounded text-[9px] cursor-pointer border transition-all font-mono"
+                x-text="'I' + l + (c.infra[l] ? '\u2713' : '')"></span>
+            </template>
+          </div>
+          <div x-show="showInfo" x-transition class="mt-1 p-1.5 rounded bg-cream border border-border text-[8px] text-muted/60 leading-relaxed font-mono">
+            I1 Open &middot; I2 Logged &middot; I3 Verified &middot; I4 Authorized &middot; I5 Contained
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Add button (custom mode, form closed) -->
+    <div x-show="$store.pac.mode === 'custom' && !$store.pac.showForm" class="mt-1 mb-2">
+      <button
+        @click="$store.pac.showForm = true"
+        class="w-full py-2 rounded-lg border border-border bg-cream text-muted text-xs font-semibold cursor-pointer transition-all hover:border-navy hover:text-navy font-sans"
+      >+ Add use case</button>
+    </div>
+
+    <!-- Add form (custom mode, inside scrollable area) -->
+    <div x-show="$store.pac.mode === 'custom' && $store.pac.showForm" x-transition class="mt-1 mb-2 p-3 rounded-lg border border-border bg-cream">
+      <div class="flex justify-between items-center mb-2.5">
+        <h3 class="text-xs text-muted tracking-wider uppercase">+ Add Case</h3>
+        <span @click="$store.pac.showForm = false" class="text-muted text-sm cursor-pointer hover:text-viz-red">&times;</span>
+      </div>
+
+      <div class="mb-2.5">
+        <label class="text-[11px] text-muted mb-1 block">Name</label>
+        <input
+          x-model="$store.pac.form.name"
+          @keydown.enter="$store.pac.addCase()"
+          type="text"
+          placeholder="e.g. Customer email agent"
+          class="w-full py-1.5 px-2.5 rounded-md border border-border bg-sand/40 text-ink text-xs font-sans outline-none focus:border-navy"
+        >
+      </div>
+
+      <div class="mb-2.5">
+        <label class="text-[11px] text-muted mb-1 block">Business Value</label>
+        <div class="flex gap-0">
+          <template x-for="bv in [{v:1,l:'V1',sub:'Incremental'},{v:2,l:'V2',sub:'Operational'},{v:3,l:'V3',sub:'Strategic'},{v:4,l:'V4',sub:'Transform',hi:true}]" :key="bv.v">
+            <span
+              @click="$store.pac.setBizValue(bv.v)"
+              :class="$store.pac.form.bizValue === bv.v
+                ? (bv.hi ? 'border-viz-amber/40 text-viz-amber bg-viz-amber/[0.08] z-10' : 'border-navy/40 text-navy bg-navy/[0.08] z-10')
+                : 'border-border text-muted bg-sand/40'"
+              class="flex-1 py-1.5 border text-center text-[10px] cursor-pointer transition-all select-none first:rounded-l-md last:rounded-r-md -ml-px first:ml-0"
+            >
+              <div class="font-semibold" x-text="bv.l"></div>
+              <div class="text-[8px] opacity-70" x-text="bv.sub"></div>
+            </span>
+          </template>
+        </div>
+      </div>
+
+      <div class="mb-2.5">
+        <label class="text-[11px] text-muted mb-1 block">Blast Radius (if it goes wrong)</label>
+        <div class="flex gap-0">
+          <template x-for="imp in [{v:1,l:'B1',sub:'Contained'},{v:2,l:'B2',sub:'Recoverable'},{v:3,l:'B3',sub:'Exposed'},{v:4,l:'B4',sub:'Regulated',hi:true},{v:5,l:'B5',sub:'Irreversible',hi:true}]" :key="imp.v">
+            <span
+              @click="$store.pac.setImpact(imp.v)"
+              :class="$store.pac.form.impact === imp.v
+                ? (imp.hi ? 'border-viz-red/40 text-viz-red bg-viz-red/[0.08] z-10' : 'border-navy/40 text-navy bg-navy/[0.08] z-10')
+                : 'border-border text-muted bg-sand/40'"
+              class="flex-1 py-1.5 border text-center text-[10px] cursor-pointer transition-all select-none first:rounded-l-md last:rounded-r-md -ml-px first:ml-0"
+            >
+              <div class="font-semibold" x-text="imp.l"></div>
+              <div class="text-[8px] opacity-70" x-text="imp.sub"></div>
+            </span>
+          </template>
+        </div>
+        <div class="text-[8px] text-muted/50 mt-1 italic" x-text="$store.pac.IMP[$store.pac.form.impact - 1].d + ' &mdash; e.g. ' + $store.pac.IMP[$store.pac.form.impact - 1].ex"></div>
+      </div>
+
+      <div class="mb-2.5">
+        <label class="text-[11px] text-muted mb-1 block">Reliability</label>
+        <div class="flex items-center gap-2">
+          <input
+            type="range" min="70" max="99.9" step="0.1"
+            x-model.number="$store.pac.form.reliability"
+            class="flex-1"
+          >
+          <span class="text-[11px] text-navy min-w-[40px] text-right font-mono"
+            x-text="parseFloat($store.pac.form.reliability).toFixed(1) + '%'"></span>
+        </div>
+      </div>
+
+      <div class="mb-2.5" x-data="{ showInfraInfo: false }">
+        <label class="text-[11px] text-muted mb-1 flex items-center gap-1.5">
+          Infrastructure safeguards
+          <span
+            @click="showInfraInfo = !showInfraInfo"
+            class="w-4 h-4 rounded-full border border-border text-[9px] text-muted/60 flex items-center justify-center cursor-pointer hover:border-muted hover:text-muted transition-all select-none"
+            :class="showInfraInfo ? 'bg-navy/10 border-navy/30 text-navy' : ''"
+          >?</span>
+        </label>
+        <div x-show="showInfraInfo" x-transition class="mb-1.5 p-2 rounded-md bg-sand/40 border border-border text-[9px] text-muted/70 leading-relaxed font-mono">
+          <div class="mb-0.5"><span class="text-muted">I1 &mdash; Open:</span> Bare model output</div>
+          <div class="mb-0.5"><span class="text-muted">I2 &mdash; Logged:</span> Audit trail</div>
+          <div class="mb-0.5"><span class="text-muted">I3 &mdash; Verified:</span> + Identity &amp; provenance</div>
+          <div class="mb-0.5"><span class="text-muted">I4 &mdash; Authorized:</span> + Positive authority grants</div>
+          <div><span class="text-muted">I5 &mdash; Contained:</span> + Sandbox &amp; isolation</div>
+        </div>
+        <div class="flex gap-0">
+          <template x-for="inf in [{l:1,name:'Open'},{l:2,name:'Logged'},{l:3,name:'Verified'},{l:4,name:'Authorized'},{l:5,name:'Contained'}]" :key="inf.l">
+            <span
+              @click="$store.pac.toggleFormInfra(inf.l)"
+              :class="$store.pac.form.infra[inf.l]
+                ? 'border-viz-green/40 text-viz-green bg-viz-green/[0.06] z-10'
+                : 'border-border text-muted bg-sand/40'"
+              class="flex-1 py-1.5 border text-center text-[10px] cursor-pointer transition-all select-none first:rounded-l-md last:rounded-r-md -ml-px first:ml-0"
+            >
+              <div class="font-semibold" x-text="'I' + inf.l"></div>
+              <div class="text-[8px] opacity-70" x-text="inf.name"></div>
+            </span>
+          </template>
+        </div>
+      </div>
+
+      <div class="mb-2.5">
+        <label class="flex items-center gap-2 p-1.5 px-2 bg-viz-amber/[0.04] border border-viz-amber/[0.15] rounded-md cursor-pointer">
+          <input type="checkbox" x-model="$store.pac.form.spawns" class="w-3.5 h-3.5">
+          <span class="text-[11px] text-muted">Spawns other agents</span>
+        </label>
+        <label x-show="$store.pac.form.spawns" x-transition class="flex items-center gap-2 p-1.5 px-2 mt-1 ml-4 bg-viz-green/[0.04] border border-viz-green/[0.15] rounded-md cursor-pointer">
+          <input type="checkbox" x-model="$store.pac.form.deputyResistant" class="w-3.5 h-3.5">
+          <span class="text-[11px] text-muted">Confused deputy resistant</span>
+        </label>
+      </div>
+
+      <button
+        @click="$store.pac.addCase()"
+        class="w-full py-2 rounded-lg border border-border bg-sand/40 text-muted text-xs font-semibold cursor-pointer transition-all hover:border-navy hover:text-navy font-sans"
+      >+ Add use case</button>
+    </div>
+  </div>
+</div>

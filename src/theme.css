@@ -1,0 +1,92 @@
+/* Hide Alpine-managed elements until Alpine initializes */
+[x-cloak] { display: none !important; }
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --color-ink: #1e2a3a;
+  --color-navy: #2d4a6f;
+  --color-muted: #5c6a78;
+  --color-cream: #f2f1ee;
+  --color-sand: #eae8e3;
+  --color-border: #d5d2cb;
+  --color-viz-blue: #3b82f6;
+  --color-viz-amber: #f59e0b;
+  --color-viz-red: #ef4444;
+  --color-viz-green: #10b981;
+  --color-viz-ghost: #93c5fd;
+}
+
+/* Scrollbar */
+.case-list::-webkit-scrollbar { width: 4px; }
+.case-list::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+
+/* Range slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 3px;
+  background: var(--color-border);
+  border-radius: 2px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-viz-blue);
+  cursor: pointer;
+}
+
+/* Tooltip — matches brand: cream card with mono type */
+.tip {
+  position: absolute;
+  display: none;
+  background: #f5f4f0;
+  border: 1px solid #d5d2cb;
+  border-radius: 3px;
+  padding: 8px 11px;
+  z-index: 20;
+  pointer-events: none;
+  max-width: 340px;
+  box-shadow: 0 1px 6px rgba(30, 42, 58, 0.08);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}
+.tip-name { font-weight: 600; font-size: 12px; color: #1e2a3a; margin-bottom: 3px; font-family: 'Inter', system-ui, sans-serif; }
+.tip-detail { font-size: 10px; color: #5c6a78; line-height: 1.6; }
+.tip-status { margin-top: 5px; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 2px; display: inline-block; }
+.tip-ok { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.tip-bad { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+/* Checkbox accent */
+input[type="checkbox"] { accent-color: var(--color-viz-amber); }
+
+/* Callout arrow pointing down to Autonomy button */
+.callout-arrow {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  animation: callout-bob 1.8s ease-in-out infinite;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.callout-arrow span {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-navy);
+  background: rgba(45, 74, 111, 0.08);
+  border: 1px solid rgba(45, 74, 111, 0.2);
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+.callout-arrow svg {
+  flex-shrink: 0;
+}
+@keyframes callout-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}

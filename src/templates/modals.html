@@ -1,0 +1,176 @@
+<!-- PAC Agent Profiler — Modals template (library) -->
+
+<!-- Help modal -->
+<div
+  data-pac-help
+  class="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 hidden"
+  onclick="if(event.target===this)this.classList.add('hidden')"
+>
+  <div class="bg-cream rounded-xl shadow-xl max-w-4xl w-full mx-4 max-h-[85vh] overflow-y-auto p-6 md:p-8 text-ink font-sans" onclick="event.stopPropagation()">
+        <div class="flex justify-between items-start mb-5">
+          <h2 class="text-lg font-bold text-ink" style="font-family:'Space Grotesk',sans-serif">How to read the chart</h2>
+          <button onclick="this.closest('[data-pac-help]').classList.add('hidden')" class="text-muted hover:text-ink text-xl cursor-pointer leading-none">&times;</button>
+        </div>
+
+        <!-- Axes -->
+        <div class="mb-5">
+          <h3 class="text-xs text-muted tracking-wider uppercase mb-2">Axes</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-[12px]">
+            <div class="p-3 rounded-lg border border-border bg-sand/40">
+              <div class="font-semibold text-ink mb-1">X &mdash; Blast Radius</div>
+              <p class="text-muted leading-relaxed">What happens when the agent gets it wrong. Higher = more damage.</p>
+            </div>
+            <div class="p-3 rounded-lg border border-border bg-sand/40">
+              <div class="font-semibold text-ink mb-1">Z &mdash; Reliability</div>
+              <p class="text-muted leading-relaxed">How often the agent gets it right. Further right = more reliable.</p>
+            </div>
+            <div class="p-3 rounded-lg border border-border bg-sand/40">
+              <div class="font-semibold text-ink mb-1">Y &mdash; Autonomy (3D)</div>
+              <p class="text-muted leading-relaxed">The level of independence the agent earns. Higher = more autonomous.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual encoding -->
+        <div class="mb-5">
+          <h3 class="text-xs text-muted tracking-wider uppercase mb-2">Visual encoding</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[12px]">
+            <div class="p-3 rounded-lg border border-border bg-sand/40">
+              <div class="font-semibold text-ink mb-1.5">Dot color</div>
+              <div class="flex gap-4">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:#10b981"></span> Meets threshold</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:#ef4444"></span> Below threshold</span>
+              </div>
+            </div>
+            <div class="p-3 rounded-lg border border-border bg-sand/40">
+              <div class="font-semibold text-ink mb-1.5">Dot size = Business Value</div>
+              <div class="flex gap-4 items-center">
+                <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full inline-block bg-muted/50"></span> V1 Incremental</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full inline-block bg-muted/50"></span> V2 Operational</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full inline-block bg-muted/50"></span> V3 Strategic</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full inline-block bg-muted/50"></span> V4 Transform</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scales -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+          <!-- Blast Radius scale -->
+          <div>
+            <h3 class="text-xs text-muted tracking-wider uppercase mb-2">Blast Radius (B1&ndash;B5)</h3>
+            <div class="space-y-1 text-[12px]">
+              <div class="flex gap-2"><span class="text-navy font-mono font-semibold w-6 shrink-0">B1</span><span class="font-semibold text-ink">Contained</span><span class="text-muted">&mdash; Errors caught before impact</span></div>
+              <div class="flex gap-2"><span class="text-navy font-mono font-semibold w-6 shrink-0">B2</span><span class="font-semibold text-ink">Recoverable</span><span class="text-muted">&mdash; Correctable with effort</span></div>
+              <div class="flex gap-2"><span class="text-navy font-mono font-semibold w-6 shrink-0">B3</span><span class="font-semibold text-ink">Exposed</span><span class="text-muted">&mdash; Public-facing, hard to recall</span></div>
+              <div class="flex gap-2"><span class="text-navy font-mono font-semibold w-6 shrink-0">B4</span><span class="font-semibold text-ink">Regulated</span><span class="text-muted">&mdash; Compliance / legal risk</span></div>
+              <div class="flex gap-2"><span class="text-navy font-mono font-semibold w-6 shrink-0">B5</span><span class="font-semibold text-ink">Irreversible</span><span class="text-muted">&mdash; Money, contracts, safety</span></div>
+            </div>
+          </div>
+
+          <!-- Autonomy scale -->
+          <div>
+            <h3 class="text-xs text-muted tracking-wider uppercase mb-2">Autonomy Levels (A1&ndash;A5)</h3>
+            <div class="space-y-1 text-[12px]">
+              <div class="flex gap-2"><span class="font-mono font-semibold w-6 shrink-0" style="color:#93c5fd">A1</span><span class="font-semibold text-ink">Suggestion</span><span class="text-muted">&mdash; Human-in-the-loop</span></div>
+              <div class="flex gap-2"><span class="font-mono font-semibold w-6 shrink-0" style="color:#60a5fa">A2</span><span class="font-semibold text-ink">Approve</span><span class="text-muted">&mdash; Drafts for approval</span></div>
+              <div class="flex gap-2"><span class="font-mono font-semibold w-6 shrink-0" style="color:#3b82f6">A3</span><span class="font-semibold text-ink">Oversight</span><span class="text-muted">&mdash; Human-on-the-loop</span></div>
+              <div class="flex gap-2"><span class="font-mono font-semibold w-6 shrink-0" style="color:#2563eb">A4</span><span class="font-semibold text-ink">Delegated</span><span class="text-muted">&mdash; Periodic review</span></div>
+              <div class="flex gap-2"><span class="font-mono font-semibold w-6 shrink-0" style="color:#1d4ed8">A5</span><span class="font-semibold text-ink">Autonomous</span><span class="text-muted">&mdash; Fully independent</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Infrastructure scale -->
+        <div class="mb-5">
+          <h3 class="text-xs text-muted tracking-wider uppercase mb-2">Infrastructure Safeguards (I1&ndash;I5)</h3>
+          <div class="flex flex-wrap gap-x-5 gap-y-1 text-[12px]">
+            <div class="flex gap-2"><span class="text-viz-green font-mono font-semibold w-6 shrink-0">I1</span><span class="font-semibold text-ink">Open</span><span class="text-muted">&mdash; Bare output</span></div>
+            <div class="flex gap-2"><span class="text-viz-green font-mono font-semibold w-6 shrink-0">I2</span><span class="font-semibold text-ink">Logged</span><span class="text-muted">&mdash; Audit trail</span></div>
+            <div class="flex gap-2"><span class="text-viz-green font-mono font-semibold w-6 shrink-0">I3</span><span class="font-semibold text-ink">Verified</span><span class="text-muted">&mdash; Identity &amp; provenance</span></div>
+            <div class="flex gap-2"><span class="text-viz-green font-mono font-semibold w-6 shrink-0">I4</span><span class="font-semibold text-ink">Authorized</span><span class="text-muted">&mdash; Authority grants</span></div>
+            <div class="flex gap-2"><span class="text-viz-green font-mono font-semibold w-6 shrink-0">I5</span><span class="font-semibold text-ink">Contained</span><span class="text-muted">&mdash; Sandbox &amp; isolation</span></div>
+          </div>
+        </div>
+
+        <div class="text-[11px] text-muted/50 text-center">
+          Built on the <a href="https://trustedagentic.ai" target="_blank" class="underline underline-offset-2 hover:text-navy">PAC Framework</a> &mdash; Potential, Accountability, Control
+        </div>
+      </div>
+    </div>
+
+<!-- How to use modal -->
+<div
+  data-pac-howto
+  class="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 hidden"
+  onclick="if(event.target===this)this.classList.add('hidden')"
+>
+  <div class="bg-cream rounded-xl shadow-xl max-w-2xl w-full mx-4 max-h-[85vh] overflow-y-auto p-6 md:p-8 text-ink font-sans" onclick="event.stopPropagation()">
+    <div class="flex justify-between items-start mb-5">
+      <h2 class="text-lg font-bold text-ink" style="font-family:'Space Grotesk',sans-serif">How to use</h2>
+      <button onclick="this.closest('[data-pac-howto]').classList.add('hidden')" class="text-muted hover:text-ink text-xl cursor-pointer leading-none">&times;</button>
+    </div>
+
+    <div class="space-y-5 text-[13px] text-muted leading-relaxed">
+      <!-- Step 1 -->
+      <div class="flex gap-3">
+        <span class="w-6 h-6 rounded-full bg-navy/10 text-navy text-xs font-bold flex items-center justify-center shrink-0">1</span>
+        <div>
+          <div class="font-semibold text-ink mb-1">Switch to "Your Cases"</div>
+          <p>Click the <strong class="text-ink">Your Cases</strong> tab in the right panel to start building your own assessment. Example cases are preloaded for reference.</p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="flex gap-3">
+        <span class="w-6 h-6 rounded-full bg-navy/10 text-navy text-xs font-bold flex items-center justify-center shrink-0">2</span>
+        <div>
+          <div class="font-semibold text-ink mb-1">Add use cases</div>
+          <p>Click <strong class="text-ink">+ Add use case</strong> and fill in the name, business value, blast radius, and reliability. Each case appears as a dot on the chart.</p>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="flex gap-3">
+        <span class="w-6 h-6 rounded-full bg-navy/10 text-navy text-xs font-bold flex items-center justify-center shrink-0">3</span>
+        <div>
+          <div class="font-semibold text-ink mb-1">Read the 2D chart</div>
+          <p><strong class="text-ink">Green dots</strong> meet the reliability threshold for their blast radius. <strong class="text-ink">Red dots</strong> fall short. Bigger dots = higher business value. The staircase lines show autonomy level thresholds.</p>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="flex gap-3">
+        <span class="w-6 h-6 rounded-full bg-navy/10 text-navy text-xs font-bold flex items-center justify-center shrink-0">4</span>
+        <div>
+          <div class="font-semibold text-ink mb-1">Enable Autonomy (3D view)</div>
+          <p>Click the <strong class="text-ink">Autonomy</strong> button to see the third axis. Cases rise to the autonomy level they <em>earn</em> based on reliability, blast radius, and infrastructure safeguards.</p>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="flex gap-3">
+        <span class="w-6 h-6 rounded-full bg-navy/10 text-navy text-xs font-bold flex items-center justify-center shrink-0">5</span>
+        <div>
+          <div class="font-semibold text-ink mb-1">Set infrastructure safeguards</div>
+          <p>Toggle <strong class="text-ink">I1&ndash;I5</strong> on each case card to see how infrastructure controls affect autonomy levels. Higher safeguards unlock higher autonomy.</p>
+        </div>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="flex gap-3">
+        <span class="w-6 h-6 rounded-full bg-navy/10 text-navy text-xs font-bold flex items-center justify-center shrink-0">6</span>
+        <div>
+          <div class="font-semibold text-ink mb-1">Tune thresholds</div>
+          <p>Click the <strong class="text-ink">gear icon</strong> to adjust the reliability thresholds and autonomy escalation strictness for your organization.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 pt-4 border-t border-border flex items-center justify-between">
+      <span class="text-[11px] text-muted/50">Click <strong class="text-muted">?</strong> on the chart for a legend reference</span>
+      <button onclick="this.closest('[data-pac-howto]').classList.add('hidden')" class="px-4 py-1.5 rounded border border-navy/50 bg-navy/[0.08] text-navy text-xs font-semibold cursor-pointer transition-all hover:bg-navy/15 font-sans">Got it</button>
+    </div>
+  </div>
+</div>
+

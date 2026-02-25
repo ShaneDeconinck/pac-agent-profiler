@@ -1,0 +1,6 @@
+/* Font injection for consumers who don't load Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+/* Use `important` so Tailwind utilities beat host site's unlayered global styles */
+@import "tailwindcss" important;
+@import "./theme.css";
