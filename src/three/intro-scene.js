@@ -3,7 +3,8 @@ import {
   AmbientLight, DirectionalLight, Vector3,
   LineBasicMaterial, BufferGeometry, Line,
   SphereGeometry, MeshPhongMaterial, Mesh,
-  MeshBasicMaterial, PlaneGeometry, DoubleSide,
+  MeshBasicMaterial, ShaderMaterial, PlaneGeometry, DoubleSide,
+  Color,
 } from 'three'
 import { S, cell, gp } from './scene.js'
 import { relToZ, reqRelForAutonomy } from '../utils/risk-calc.js'
@@ -126,20 +127,58 @@ export function initIntroScene(container) {
     }
   }
 
-  // --- Infrastructure: full-size planes at each level (I1-I5) ---
+  // --- Infrastructure: full-size planes with animated gradient (I1-I5) ---
   const INFRA_COL = 0x78716c
+  const infraColor = new Color(INFRA_COL)
   addAxisLine('infrastructure', [S, 0, S], [S, S + 0.3, S], INFRA_COL, 0.4)
+
+  const infraGradientMats = []
+  const infraVertShader = `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `
+  const infraFragShader = `
+    uniform vec3 uColor;
+    uniform float uOpacity;
+    uniform float uTime;
+    uniform float uLevel;
+    varying vec2 vUv;
+    void main() {
+      // Diagonal sweep gradient
+      float d = (vUv.x + vUv.y) * 0.5;
+      float wave = sin(d * 6.2832 - uTime * 0.4 + uLevel) * 0.5 + 0.5;
+      float alpha = uOpacity * (0.4 + 0.6 * wave);
+      gl_FragColor = vec4(uColor, alpha);
+    }
+  `
+
   for (let l = 1; l <= 5; l++) {
-    const y = l * cell // top of each autonomy cell, matching main scene
-    // Full S×S translucent plane
+    const y = l * cell
     const ipg = new PlaneGeometry(S, S)
     ipg.rotateX(-Math.PI / 2)
     const ipOp = 0.08
-    const ipMat = new MeshBasicMaterial({ color: INFRA_COL, transparent: true, opacity: ipOp, side: DoubleSide, depthWrite: false })
+    const ipMat = new ShaderMaterial({
+      uniforms: {
+        uColor: { value: infraColor },
+        uOpacity: { value: ipOp },
+        uTime: { value: 0 },
+        uLevel: { value: l * 1.2 },
+      },
+      vertexShader: infraVertShader,
+      fragmentShader: infraFragShader,
+      transparent: true,
+      side: DoubleSide,
+      depthWrite: false,
+    })
     const ipMesh = new Mesh(ipg, ipMat)
     ipMesh.position.set(S / 2, y, S / 2)
     scene.add(ipMesh)
-    dimMats.infrastructure.push({ mat: ipMat, origOp: ipOp })
+    infraGradientMats.push(ipMat)
+    // Track for highlighting (use opacity uniform)
+    dimMats.infrastructure.push({ mat: ipMat, origOp: ipOp, isShader: true })
     // Border outline
     const bp = [[0, y, 0], [S, y, 0], [S, y, S], [0, y, S], [0, y, 0]].map(v => new Vector3(...v))
     const borderMat = new LineBasicMaterial({ color: INFRA_COL, transparent: true, opacity: 0.25 })
@@ -197,7 +236,7 @@ export function initIntroScene(container) {
         if (rNext <= 0.999) zEnd = relToZ(rNext * 100, S)
       }
       const zLen = zEnd - z
-      const shelfOp = 0.08 + l * 0.03
+      const shelfOp = 0.04 + l * 0.015
       // Horizontal shelf
       if (zLen > 0.01) {
         const sg = new PlaneGeometry(cell, zLen)
@@ -346,10 +385,13 @@ export function initIntroScene(container) {
   function applyHighlight(dim) {
     // Axis/element materials — brighten matched, dim others
     Object.entries(dimMats).forEach(([key, items]) => {
-      items.forEach(({ mat, origOp }) => {
-        if (!dim) { mat.opacity = origOp }
-        else if (key === dim) { mat.opacity = Math.min(1, origOp * 4) }
-        else { mat.opacity = origOp * 0.4 }
+      items.forEach(({ mat, origOp, isShader }) => {
+        let op
+        if (!dim) { op = origOp }
+        else if (key === dim) { op = Math.min(1, origOp * 4) }
+        else { op = origOp * 0.4 }
+        if (isShader) { mat.uniforms.uOpacity.value = op }
+        else { mat.opacity = op }
       })
     })
 
@@ -455,9 +497,12 @@ export function initIntroScene(container) {
 
   // --- Animate ---
   let animId = null
+  const clock = { start: performance.now() }
   function animate() {
     animId = requestAnimationFrame(animate)
+    const t = (performance.now() - clock.start) * 0.001
     theta += 0.0008
+    infraGradientMats.forEach(m => { m.uniforms.uTime.value = t })
     updateCamera()
     updateLabels()
     renderer.render(scene, camera)
