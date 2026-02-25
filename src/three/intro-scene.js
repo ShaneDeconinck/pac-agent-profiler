@@ -168,7 +168,7 @@ export function initIntroScene(container) {
     const x = gp(d.imp), y = gp(d.aut), z = relToZ(d.rel, S)
     const m = new Mesh(
       new SphereGeometry(r, 10, 10),
-      new MeshPhongMaterial({ color: col, emissive: col, emissiveIntensity: 0.25, transparent: true, opacity: 0.8 }),
+      new MeshPhongMaterial({ color: col, emissive: col, emissiveIntensity: 0.5, transparent: true, opacity: 1 }),
     )
     m.position.set(x, y, z)
     scene.add(m)
@@ -366,11 +366,11 @@ export function initIntroScene(container) {
     // Dots — pulse on businessValue, otherwise restore
     dotMeshes.forEach(m => {
       if (dim === 'businessValue') {
-        m.scale.setScalar(1.5)
-        m.material.emissiveIntensity = 0.4
+        m.scale.setScalar(1.6)
+        m.material.emissiveIntensity = 0.8
       } else {
         m.scale.setScalar(1)
-        m.material.emissiveIntensity = 0.25
+        m.material.emissiveIntensity = 0.5
       }
     })
 
